@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QX11Info>
 #include <QWindow>
+#include <QScreen>
 
 #include <KWindowEffects>
 #include <KWindowSystem>
@@ -109,6 +110,29 @@ void XWindowInterface::toggleMinimize(quint64 wid)
     } else {
         KWindowSystem::minimizeWindow(wid);
     }
+}
+
+void XWindowInterface::setViewStruts(QWindow *view, const QRect &rect)
+{
+    NETExtendedStrut strut;
+
+    const auto screen = view->screen();
+
+    const QRect currentScreen {screen->geometry()};
+    const QRect wholeScreen { {0, 0}, screen->virtualSize() };
+
+    // bottom
+    const int bottomOffset { wholeScreen.bottom() - currentScreen.bottom() };
+    strut.bottom_width = rect.height() + bottomOffset;
+    strut.bottom_start = rect.x();
+    strut.bottom_end = rect.x() + rect.width() - 1;
+
+    KWindowSystem::setExtendedStrut(view->winId(),
+                                    strut.left_width,   strut.left_start,   strut.left_end,
+                                    strut.right_width,  strut.right_start,  strut.right_end,
+                                    strut.top_width,    strut.top_start,    strut.top_end,
+                                    strut.bottom_width, strut.bottom_start, strut.bottom_end
+                                    );
 }
 
 void XWindowInterface::startInitWindows()

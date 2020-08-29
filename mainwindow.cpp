@@ -95,6 +95,8 @@ void MainWindow::resizeWindow()
     setMinimumSize(size);
     setMaximumSize(size);
     resize(size);
+
+    XWindowInterface::instance()->setViewStruts(this, geometry());
 }
 
 void MainWindow::adaptToScreen(QScreen *screen)
@@ -103,4 +105,3 @@ void MainWindow::adaptToScreen(QScreen *screen)
 
     m_timerGeometry.start();
 }
-

@@ -22,6 +22,7 @@ public:
     bool isAcceptableWindow(quint64 wid);
 
     void toggleMinimize(quint64 wid);
+    void setViewStruts(QWindow *view, const QRect &rect);
 
     void startInitWindows();
 
