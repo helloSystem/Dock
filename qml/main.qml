@@ -1,11 +1,20 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
+import QtGraphicalEffects 1.0
 
 Rectangle {
     visible: true
     id: root
 
-//    color: "red"
+    color: "transparent"
+
+    Rectangle {
+        id: background
+        anchors.fill: parent
+        radius: parent.height * 0.3
+        opacity: 0.6
+        color: "white"
+    }
 
     DockItem {
         id: launcherItem
@@ -17,13 +26,12 @@ Rectangle {
         iconSource: "file:///usr/share/icons/Lucia/apps/scalable/launcher.svg"
     }
 
-    Rectangle {
+    Item {
         id: appList
         anchors.left: launcherItem.right
         anchors.top: parent.top
         width: parent.width - launcherItem.width * 2
         height: parent.height
-        // color: "transparent"
 
         ListView {
             id: pageView

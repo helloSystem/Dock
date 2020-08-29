@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 
-Item {
+Rectangle {
     id: dockItem
     width: root.height
     height: root.height
@@ -14,11 +14,15 @@ Item {
     property double iconSizeRatio: 0.8
     property var iconSource
 
+    color: "transparent"
+
     Image {
         id: icon
         source: iconSource
         sourceSize.width: parent.height * iconSizeRatio
         sourceSize.height: parent.height * iconSizeRatio
+
+        opacity: 1
 
         anchors {
             horizontalCenter: parent.horizontalCenter

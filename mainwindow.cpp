@@ -3,8 +3,11 @@
 
 #include <QGuiApplication>
 #include <QScreen>
-
 #include <QAction>
+#include <QPainter>
+#include <QImage>
+#include <QRegion>
+
 #include <QQmlContext>
 #include <QQmlProperty>
 #include <QQuickItem>
@@ -18,7 +21,7 @@ MainWindow::MainWindow(QQuickView *parent)
       m_appModel(new ApplicationModel)
 {
     setDefaultAlphaBuffer(true);
-    // setOpacity(0.8);
+    setColor(Qt::transparent);
 
     KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager);
@@ -71,6 +74,8 @@ void MainWindow::updatePosition()
     position = { screenGeometry.x(), screenGeometry.y() + screenGeometry.height() - height()};
     m_maxLength = screenGeometry.width();
 
+    position.setX((screenGeometry.width() - geometry().width()) / 2);
+
     // left
     // position = {screenGeometry.x(), screenGeometry.y()};
     // m_maxLength = screenGeometry.height();
@@ -89,13 +94,15 @@ void MainWindow::resizeWindow()
     // const QSize size{m_iconSize, screenSize.height()};
 
     // horizontal
-    const QSize size{screenSize.width(), m_appModel->iconSize()};
-    // size.setWidth((m_appModel->rowCount() + 2)* m_appModel->iconSize());
+    QSize size { screenSize.width(), m_appModel->iconSize() };
+    size.setWidth((m_appModel->rowCount() + 2) * m_appModel->iconSize());
 
     setMinimumSize(size);
     setMaximumSize(size);
     resize(size);
 
+    const QRect rect { 0, 0, size.width(), size.height() };
+    XWindowInterface::instance()->enableBlurBehind(this, cornerMask(rect, rect.height() * 0.3));
     XWindowInterface::instance()->setViewStruts(this, geometry());
 }
 
@@ -104,4 +111,26 @@ void MainWindow::adaptToScreen(QScreen *screen)
     setScreen(screen);
 
     m_timerGeometry.start();
+}
+
+QRegion MainWindow::cornerMask(const QRect &rect, const int r)
+{
+    QRegion region;
+    // middle and borders
+    region += rect.adjusted(r, 0, -r, 0);
+    region += rect.adjusted(0, r, 0, -r);
+    // top left
+    QRect corner(rect.topLeft(), QSize(r * 2, r * 2));
+    region += QRegion(corner, QRegion::Ellipse);
+    // top right
+    corner.moveTopRight(rect.topRight());
+    region += QRegion(corner, QRegion::Ellipse);
+    // bottom left
+    corner.moveBottomLeft(rect.bottomLeft());
+    region += QRegion(corner, QRegion::Ellipse);
+    // bottom right
+    corner.moveBottomRight(rect.bottomRight());
+    region += QRegion(corner, QRegion::Ellipse);
+
+    return region;
 }

@@ -19,6 +19,8 @@ private:
     void resizeWindow();
     void adaptToScreen(QScreen *screen);
 
+    QRegion cornerMask(const QRect &rect, const int r);
+
 private:
     ApplicationModel *m_appModel;
     QTimer m_timerGeometry;

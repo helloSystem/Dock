@@ -32,9 +32,9 @@ XWindowInterface::XWindowInterface(QObject *parent)
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &XWindowInterface::activeChanged);
 }
 
-void XWindowInterface::enableBlurBehind(QWindow &view)
+void XWindowInterface::enableBlurBehind(QWindow *view, const QRegion &region)
 {
-    KWindowEffects::enableBlurBehind(view.winId());
+    KWindowEffects::enableBlurBehind(view->winId(), true, region);
 }
 
 ApplicationItem XWindowInterface::requestInfo(quint64 wid)

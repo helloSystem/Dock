@@ -46,7 +46,7 @@ Item {
                     from: 1
                     to: 1.1
                     duration: 150
-                    easing.type: Easing.InCubic
+                    easing.type: Easing.OutCubic
                 }
             },
             Transition {
@@ -59,7 +59,7 @@ Item {
                     from: 1.1
                     to: 1
                     duration: 150
-                    easing.type: Easing.OutCubic
+                    easing.type: Easing.InCubic
                 }
             }
         ]

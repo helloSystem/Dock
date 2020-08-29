@@ -3,7 +3,7 @@
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
       m_iface(XWindowInterface::instance()),
-      m_iconSize(64)
+      m_iconSize(128)
 {
     connect(m_iface, &XWindowInterface::windowAdded, this, &ApplicationModel::onWindowAdded);
     connect(m_iface, &XWindowInterface::windowRemoved, this, &ApplicationModel::onWindowRemoved);
