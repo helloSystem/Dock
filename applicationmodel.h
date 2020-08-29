@@ -36,6 +36,7 @@ private:
     int indexOf(quint64 wid);
     void onWindowAdded(quint64 wid);
     void onWindowRemoved(quint64 wid);
+    void onActiveChanged(quint64 wid);
 
 private:
     XWindowInterface *m_iface;

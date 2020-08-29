@@ -51,7 +51,7 @@ void MainWindow::init()
     connect(this, &QQuickView::xChanged, this, &MainWindow::updatePosition);
     connect(this, &QQuickView::yChanged, this, &MainWindow::updatePosition);
 
-    setSource(QUrl(QStringLiteral("qrc:/main.qml")));
+    setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     m_timerGeometry.start();
 }

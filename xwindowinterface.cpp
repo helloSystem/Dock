@@ -28,6 +28,7 @@ XWindowInterface::XWindowInterface(QObject *parent)
 {
     connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &XWindowInterface::onWindowadded);
     connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &XWindowInterface::windowRemoved);
+    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &XWindowInterface::activeChanged);
 }
 
 void XWindowInterface::enableBlurBehind(QWindow &view)
@@ -54,7 +55,7 @@ ApplicationItem XWindowInterface::requestInfo(quint64 wid)
 
     item.winId = wid;
     item.iconName = winClass;
-    item.isActive = false;
+    item.isActive = wid == KWindowSystem::activeWindow();
 
     return item;
 }

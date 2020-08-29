@@ -7,6 +7,7 @@ ApplicationModel::ApplicationModel(QObject *parent)
 {
     connect(m_iface, &XWindowInterface::windowAdded, this, &ApplicationModel::onWindowAdded);
     connect(m_iface, &XWindowInterface::windowRemoved, this, &ApplicationModel::onWindowRemoved);
+    connect(m_iface, &XWindowInterface::activeChanged, this, &ApplicationModel::onActiveChanged);
 
     m_iface->startInitWindows();
 }
@@ -102,4 +103,19 @@ void ApplicationModel::onWindowRemoved(quint64 wid)
     endRemoveRows();
 
     emit countChanged();
+}
+
+void ApplicationModel::onActiveChanged(quint64 wid)
+{
+    beginResetModel();
+
+    for (ApplicationItem &item : m_appItems) {
+        if (item.winId == wid) {
+            item.isActive = true;
+        } else {
+            item.isActive = false;
+        }
+    }
+
+    endResetModel();
 }

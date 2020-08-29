@@ -28,6 +28,7 @@ public:
 signals:
     void windowAdded(quint64 wid);
     void windowRemoved(quint64 wid);
+    void activeChanged(quint64 wid);
 
 private:
     void onWindowadded(quint64 wid);
