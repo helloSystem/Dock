@@ -115,6 +115,7 @@ void XWindowInterface::toggleMinimize(quint64 wid)
 void XWindowInterface::setViewStruts(QWindow *view, const QRect &rect)
 {
     NETExtendedStrut strut;
+    int margin = 10;
 
     const auto screen = view->screen();
 
@@ -123,9 +124,9 @@ void XWindowInterface::setViewStruts(QWindow *view, const QRect &rect)
 
     // bottom
     const int bottomOffset { wholeScreen.bottom() - currentScreen.bottom() };
-    strut.bottom_width = rect.height() + bottomOffset;
+    strut.bottom_width = rect.height() + bottomOffset + margin;
     strut.bottom_start = rect.x();
-    strut.bottom_end = rect.x() + rect.width() - 1;
+    strut.bottom_end = rect.x() + rect.width();
 
     KWindowSystem::setExtendedStrut(view->winId(),
                                     strut.left_width,   strut.left_start,   strut.left_end,

@@ -69,6 +69,7 @@ void MainWindow::updatePosition()
 {
     const QRect screenGeometry = screen()->geometry();
     QPoint position = {0, 0};
+    int margin = 10;
 
     // bottom
     position = { screenGeometry.x(), screenGeometry.y() + screenGeometry.height() - height()};
@@ -81,7 +82,7 @@ void MainWindow::updatePosition()
     // m_maxLength = screenGeometry.height();
 
     setX(position.x());
-    setY(position.y());
+    setY(position.y() - margin / 2);
 }
 
 void MainWindow::resizeWindow()
