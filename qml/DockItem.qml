@@ -12,21 +12,71 @@ Rectangle {
     property var inactiveDotColor: "#000000"
 
     property double iconSizeRatio: 0.8
-    property var iconSource
+    property var iconName
+
+    signal clicked()
 
     color: "transparent"
 
     Image {
         id: icon
-        source: iconSource
+        source: {
+            return iconName ? iconName.indexOf("/") === 0 || iconName.indexOf("file://") === 0 || iconName.indexOf("qrc") === 0
+                              ? iconName : "image://icontheme/" + iconName : iconName;
+        }
         sourceSize.width: parent.height * iconSizeRatio
         sourceSize.height: parent.height * iconSizeRatio
-
-        opacity: 1
+        width: sourceSize.width
+        height: sourceSize.height
+        smooth: true
 
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
+        }
+
+        states: ["mouseIn", "mouseOut"]
+        state: "mouseOut"
+
+        transitions: [
+            Transition {
+                from: "*"
+                to: "mouseIn"
+
+                NumberAnimation {
+                    target: icon
+                    properties: "scale"
+                    from: 1
+                    to: 1.1
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
+            },
+            Transition {
+                from: "*"
+                to: "mouseOut"
+
+                NumberAnimation {
+                    target: icon
+                    properties: "scale"
+                    from: 1.1
+                    to: 1
+                    duration: 100
+                    easing.type: Easing.InCubic
+                }
+            }
+        ]
+    }
+
+    MouseArea {
+        id: iconArea
+        anchors.fill: icon
+        hoverEnabled: true
+
+        onClicked: dockItem.clicked()
+
+        onContainsMouseChanged: {
+            icon.state = containsMouse ? "mouseIn" : "mouseOut"
         }
     }
 

@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         applicationmodel.cpp \
+        docksettings.cpp \
         iconthemeimageprovider.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -41,6 +42,7 @@ DISTFILES +=
 HEADERS += \
     applicationitem.h \
     applicationmodel.h \
+    docksettings.h \
     iconthemeimageprovider.h \
     mainwindow.h \
     xwindowinterface.h

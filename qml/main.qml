@@ -21,9 +21,9 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
 
-        iconSizeRatio: 0.7
+        iconSizeRatio: 0.75
         enableActivateDot: false
-        iconSource: "file:///usr/share/icons/Lucia/apps/scalable/launcher.svg"
+        iconName: "qrc:/svg/launcher.svg"
     }
 
     Item {
@@ -50,9 +50,9 @@ Rectangle {
         anchors.left: appList.right
         anchors.top: parent.top
 
-        iconSizeRatio: 0.7
+        iconSizeRatio: 0.75
         enableActivateDot: false
-        iconSource: "file:///home/reven/Panda/panda-dock/resources/user-trash-full.svg"
+        iconName: "user-trash-empty"
     }
 
     function toggleMinimize(wid) {
