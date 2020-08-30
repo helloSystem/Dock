@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "iconthemeimageprovider.h"
+#include "processprovider.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QQuickView *parent)
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager);
 
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
+    engine()->rootContext()->setContextProperty("process", new ProcessProvider);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);

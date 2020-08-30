@@ -21,6 +21,7 @@ set(SRCS
     src/iconthemeimageprovider.cpp
     src/main.cpp
     src/mainwindow.cpp
+    src/processprovider.cpp
     src/xwindowinterface.cpp
 )
 

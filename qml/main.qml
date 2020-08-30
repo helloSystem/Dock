@@ -24,6 +24,10 @@ Rectangle {
         iconSizeRatio: 0.75
         enableActivateDot: false
         iconName: "qrc:/svg/launcher.svg"
+
+        onClicked: {
+            process.start("cyber-launcher")
+        }
     }
 
     Item {
