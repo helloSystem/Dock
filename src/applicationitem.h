@@ -9,6 +9,7 @@ public:
     quint64 winId;
     QString windowClass;
     QString iconName;
+    QString visibleName;
     bool isActive;
 
     bool operator==(ApplicationItem item) {

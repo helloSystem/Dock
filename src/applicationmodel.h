@@ -15,6 +15,7 @@ public:
         WindowClass,
         IconName,
         IconSize,
+        VisibleName,
         ActiveRole
     };
 

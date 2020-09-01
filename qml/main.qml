@@ -24,6 +24,7 @@ Rectangle {
         iconSizeRatio: 0.75
         enableActivateDot: false
         iconName: "qrc:/svg/launcher.svg"
+        popupText: qsTr("Launcher")
 
         onClicked: {
             process.start("cyber-launcher")
@@ -53,6 +54,7 @@ Rectangle {
         id: trashItem
         anchors.left: appList.right
         anchors.top: parent.top
+        popupText: qsTr("Trash")
 
         iconSizeRatio: 0.75
         enableActivateDot: false

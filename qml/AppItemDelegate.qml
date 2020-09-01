@@ -21,6 +21,7 @@ Item {
         anchors.fill: parent
         iconName: model.iconName
         isActive: model.isActive
+        popupText: model.visibleName
 
         onClicked: root.toggleMinimize(model.appId)
     }

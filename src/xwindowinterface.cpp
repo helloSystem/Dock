@@ -57,6 +57,7 @@ ApplicationItem XWindowInterface::requestInfo(quint64 wid)
     item.winId = wid;
     item.iconName = winClass;
     item.isActive = wid == KWindowSystem::activeWindow();
+    item.visibleName = winfo.visibleName();
 
     return item;
 }

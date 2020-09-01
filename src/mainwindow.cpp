@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "iconthemeimageprovider.h"
 #include "processprovider.h"
+#include "popuptips.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -24,11 +25,14 @@ MainWindow::MainWindow(QQuickView *parent)
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
 
-    KWindowSystem::setType(winId(), NET::Dock);
+    setFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager);
+    KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
+    KWindowSystem::setType(winId(), NET::Dock);
 
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
+    engine()->rootContext()->setContextProperty("popupTips", new PopupTips);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);

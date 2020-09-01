@@ -11,6 +11,8 @@ Rectangle {
     property var activateDotColor: "#2E64E6"
     property var inactiveDotColor: "#000000"
 
+    property var popupText
+
     property double iconSizeRatio: 0.8
     property var iconName
 
@@ -77,6 +79,8 @@ Rectangle {
 
         onContainsMouseChanged: {
             icon.state = containsMouse ? "mouseIn" : "mouseOut"
+            // popupTips.popup(containsMouse, dockItem.mapToGlobal(0, -(dockItem.height + icon.height)), popupText)
+            popupTips.popup(containsMouse, dockItem.mapToGlobal(0, 0), popupText)
         }
     }
 

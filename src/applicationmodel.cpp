@@ -3,7 +3,7 @@
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
       m_iface(XWindowInterface::instance()),
-      m_iconSize(72)
+      m_iconSize(88)
 {
     connect(m_iface, &XWindowInterface::windowAdded, this, &ApplicationModel::onWindowAdded);
     connect(m_iface, &XWindowInterface::windowRemoved, this, &ApplicationModel::onWindowRemoved);
@@ -25,6 +25,7 @@ QHash<int, QByteArray> ApplicationModel::roleNames() const
     roles[AppIdRole] = "appId";
     roles[WindowClass] = "windowClass";
     roles[IconName] = "iconName";
+    roles[VisibleName] = "visibleName";
     roles[ActiveRole] = "isActive";
     return roles;
 }
@@ -43,6 +44,8 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         return item.windowClass;
     case IconName:
         return item.iconName;
+    case VisibleName:
+        return item.visibleName;
     case ActiveRole:
         return item.isActive;
     }
