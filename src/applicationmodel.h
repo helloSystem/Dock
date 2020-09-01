@@ -25,7 +25,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    Q_INVOKABLE void toggleMinimize(quint64 wid);
+    Q_INVOKABLE void clicked(quint64 wid);
 
     int iconSize() { return m_iconSize; }
 

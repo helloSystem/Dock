@@ -62,6 +62,6 @@ Rectangle {
     }
 
     function toggleMinimize(wid) {
-        appModel.toggleMinimize(wid)
+        appModel.clicked(wid)
     }
 }

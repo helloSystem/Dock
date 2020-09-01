@@ -99,17 +99,14 @@ bool XWindowInterface::isAcceptableWindow(quint64 wid)
     return !NET::typeMatchesMask(info.windowType(NET::AllTypesMask), normalFlag);
 }
 
-void XWindowInterface::toggleMinimize(quint64 wid)
+void XWindowInterface::clicked(quint64 wid)
 {
     KWindowInfo info(wid, NET::WMDesktop | NET::WMState | NET::XAWMState);
 
-    if (info.isMinimized()) {
-        bool onCurrent = info.isOnDesktop(KWindowSystem::self()->currentDesktop());
-        KWindowSystem::unminimizeWindow(wid);
-        if (onCurrent)
-            KWindowSystem::forceActiveWindow(wid);
-    } else {
+    if (KWindowSystem::activeWindow() == wid) {
         KWindowSystem::minimizeWindow(wid);
+    } else {
+        KWindowSystem::forceActiveWindow(wid);
     }
 }
 

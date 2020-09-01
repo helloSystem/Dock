@@ -54,9 +54,9 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void ApplicationModel::toggleMinimize(quint64 wid)
+void ApplicationModel::clicked(quint64 wid)
 {
-    m_iface->toggleMinimize(wid);
+    m_iface->clicked(wid);
 }
 
 bool ApplicationModel::contains(quint64 wid)
