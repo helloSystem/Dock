@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QQuickView>
+#include <QVariantAnimation>
 #include <QTimer>
 #include "applicationmodel.h"
 
@@ -13,18 +14,17 @@ public:
     explicit MainWindow(QQuickView *parent = nullptr);
 
 private:
-    void init();
-    void initWindow();
     void updatePosition();
     void resizeWindow();
-    void adaptToScreen(QScreen *screen);
+    void updateBlurRegion();
+    void updateViewStruts();
+    void onResizeValueChanged(const QVariant &value);
 
     QRegion cornerMask(const QRect &rect, const int r);
 
 private:
     ApplicationModel *m_appModel;
-    QTimer m_timerGeometry;
-    QTimer m_lockGeometry;
+    QVariantAnimation *m_resizeAnimation;
     int m_maxLength;
 };
 

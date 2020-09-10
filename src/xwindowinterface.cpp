@@ -32,9 +32,9 @@ XWindowInterface::XWindowInterface(QObject *parent)
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &XWindowInterface::activeChanged);
 }
 
-void XWindowInterface::enableBlurBehind(QWindow *view, const QRegion &region)
+void XWindowInterface::enableBlurBehind(QWindow *view, bool enable, const QRegion &region)
 {
-    KWindowEffects::enableBlurBehind(view->winId(), true, region);
+    KWindowEffects::enableBlurBehind(view->winId(), enable, region);
 }
 
 ApplicationItem XWindowInterface::requestInfo(quint64 wid)
@@ -58,6 +58,9 @@ ApplicationItem XWindowInterface::requestInfo(quint64 wid)
     item.iconName = winClass;
     item.isActive = wid == KWindowSystem::activeWindow();
     item.visibleName = winfo.visibleName();
+
+    item.id = winClass;
+    item.wids.append(wid);
 
     return item;
 }

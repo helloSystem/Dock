@@ -12,6 +12,9 @@ public:
     QString visibleName;
     bool isActive;
 
+    QString id;
+    QList<quint64> wids;
+
     bool operator==(ApplicationItem item) {
         return item.winId == this->winId;
     }

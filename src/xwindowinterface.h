@@ -16,7 +16,7 @@ public:
     static XWindowInterface *instance();
     explicit XWindowInterface(QObject *parent = nullptr);
 
-    void enableBlurBehind(QWindow *view, const QRegion &region = QRegion());
+    void enableBlurBehind(QWindow *view, bool enable = true, const QRegion &region = QRegion());
 
     ApplicationItem requestInfo(quint64 wid);
     bool isAcceptableWindow(quint64 wid);

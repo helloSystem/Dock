@@ -20,7 +20,8 @@
 
 MainWindow::MainWindow(QQuickView *parent)
     : QQuickView(parent),
-      m_appModel(new ApplicationModel)
+      m_appModel(new ApplicationModel),
+      m_resizeAnimation(new QVariantAnimation(this))
 {
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
@@ -37,38 +38,15 @@ MainWindow::MainWindow(QQuickView *parent)
 
     setResizeMode(QQuickView::SizeRootObjectToView);
     setClearBeforeRendering(true);
+    setScreen(qGuiApp->primaryScreen());
+    setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    resizeWindow();
 
-    adaptToScreen(qGuiApp->primaryScreen());
-
-    m_timerGeometry.setSingleShot(true);
-    m_timerGeometry.setInterval(500);
-
-    m_lockGeometry.setSingleShot(true);
-    m_lockGeometry.setInterval(700);
-
-    init();
-
-    connect(m_appModel, &ApplicationModel::countChanged, this, &MainWindow::initWindow);
-}
-
-void MainWindow::init()
-{
-    connect(&m_timerGeometry, &QTimer::timeout, this, &MainWindow::initWindow);
-    connect(&m_lockGeometry, &QTimer::timeout, this, &MainWindow::updatePosition);
-
-    // rekols
     connect(this, &QQuickView::xChanged, this, &MainWindow::updatePosition);
     connect(this, &QQuickView::yChanged, this, &MainWindow::updatePosition);
-
-    setSource(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-
-    m_timerGeometry.start();
-}
-
-void MainWindow::initWindow()
-{
-    resizeWindow();
-    updatePosition();
+    connect(m_appModel, &ApplicationModel::countChanged, this, &MainWindow::resizeWindow);
+    connect(m_resizeAnimation, &QVariantAnimation::valueChanged, this, &MainWindow::onResizeValueChanged);
+    // connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
 }
 
 void MainWindow::updatePosition()
@@ -101,23 +79,46 @@ void MainWindow::resizeWindow()
     // const QSize size{m_iconSize, screenSize.height()};
 
     // horizontal
-    QSize size { screenSize.width(), m_appModel->iconSize() };
-    size.setWidth((m_appModel->rowCount() + 2) * m_appModel->iconSize());
+    QSize newSize { screenSize.width(), m_appModel->iconSize() };
+    newSize.setWidth((m_appModel->rowCount() + 2) * m_appModel->iconSize());
 
-    setMinimumSize(size);
-    setMaximumSize(size);
-    resize(size);
+    if (m_resizeAnimation->state() == QVariantAnimation::Running) {
+        m_resizeAnimation->stop();
+    }
 
-    const QRect rect { 0, 0, size.width(), size.height() };
-    XWindowInterface::instance()->enableBlurBehind(this, cornerMask(rect, rect.height() * 0.3));
+    if (newSize.width() > size().width()) {
+        m_resizeAnimation->setEasingCurve(QEasingCurve::InOutCubic);
+    } else {
+        m_resizeAnimation->setEasingCurve(QEasingCurve::InCubic);
+    }
+
+    XWindowInterface::instance()->enableBlurBehind(this, false);
+    m_resizeAnimation->setDuration(250);
+    m_resizeAnimation->setStartValue(this->size());
+    m_resizeAnimation->setEndValue(newSize);
+    m_resizeAnimation->start();
+}
+
+void MainWindow::updateBlurRegion()
+{
+    const QRect rect { 0, 0, size().width(), size().height() };
+    XWindowInterface::instance()->enableBlurBehind(this, true, cornerMask(rect, rect.height() * 0.3));
+}
+
+void MainWindow::updateViewStruts()
+{
     XWindowInterface::instance()->setViewStruts(this, geometry());
 }
 
-void MainWindow::adaptToScreen(QScreen *screen)
+void MainWindow::onResizeValueChanged(const QVariant &value)
 {
-    setScreen(screen);
-
-    m_timerGeometry.start();
+    const QSize &s = value.toSize();
+    setMinimumSize(s);
+    setMaximumSize(s);
+    resize(s);
+    updatePosition();
+    updateBlurRegion();
+    updateViewStruts();
 }
 
 QRegion MainWindow::cornerMask(const QRect &rect, const int r)
