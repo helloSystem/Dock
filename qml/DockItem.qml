@@ -77,10 +77,14 @@ Rectangle {
 
         onClicked: dockItem.clicked()
 
-        onContainsMouseChanged: {
-            icon.state = containsMouse ? "mouseIn" : "mouseOut"
-            // popupTips.popup(containsMouse, dockItem.mapToGlobal(0, -(dockItem.height + icon.height)), popupText)
-            popupTips.popup(containsMouse, dockItem.mapToGlobal(0, 0), popupText)
+        onEntered: {
+            icon.state = "mouseIn"
+            popupTips.popup(dockItem.mapToGlobal(0, 0), popupText)
+        }
+
+        onExited: {
+            icon.state = "mouseOut"
+            popupTips.hide()
         }
     }
 

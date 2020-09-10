@@ -10,8 +10,9 @@ class PopupTips : public QQuickView
 public:
     explicit PopupTips(QQuickView *parent = nullptr);
 
-    Q_INVOKABLE void popup(bool containsMouse, qreal mouseX, qreal mouseY);
-    Q_INVOKABLE void popup(bool containsMouse, const QPointF point, const QString &text);
+    Q_INVOKABLE void popup(const QPointF point, const QString &text);
+    Q_INVOKABLE void hide();
+    Q_INVOKABLE void updateBlurRegion();
 };
 
 #endif // POPUPTIPSMANAGER_H

@@ -18,7 +18,12 @@ public:
 
     void enableBlurBehind(QWindow *view, bool enable = true, const QRegion &region = QRegion());
 
-    ApplicationItem requestInfo(quint64 wid);
+    WId activeWindow();
+    void minimizeWindow(WId win);
+    void forceActiveWindow(WId win);
+
+    QMap<QString, QVariant> requestInfo(quint64 wid);
+    QString requestWindowClass(quint64 wid);
     bool isAcceptableWindow(quint64 wid);
 
     void clicked(quint64 wid);

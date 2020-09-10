@@ -60,8 +60,4 @@ Rectangle {
         enableActivateDot: false
         iconName: "user-trash-empty"
     }
-
-    function toggleMinimize(wid) {
-        appModel.clicked(wid)
-    }
 }

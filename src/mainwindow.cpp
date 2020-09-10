@@ -2,6 +2,7 @@
 #include "iconthemeimageprovider.h"
 #include "processprovider.h"
 #include "popuptips.h"
+//  #include "trashmanager.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QQuickView *parent)
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
     engine()->rootContext()->setContextProperty("popupTips", new PopupTips);
+    // engine()->rootContext()->setContextProperty("trashManager", new TrashManager);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);
@@ -127,15 +129,19 @@ QRegion MainWindow::cornerMask(const QRect &rect, const int r)
     // middle and borders
     region += rect.adjusted(r, 0, -r, 0);
     region += rect.adjusted(0, r, 0, -r);
+
     // top left
     QRect corner(rect.topLeft(), QSize(r * 2, r * 2));
     region += QRegion(corner, QRegion::Ellipse);
+
     // top right
     corner.moveTopRight(rect.topRight());
     region += QRegion(corner, QRegion::Ellipse);
+
     // bottom left
     corner.moveBottomLeft(rect.bottomLeft());
     region += QRegion(corner, QRegion::Ellipse);
+
     // bottom right
     corner.moveBottomRight(rect.bottomRight());
     region += QRegion(corner, QRegion::Ellipse);

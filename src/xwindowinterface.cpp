@@ -37,9 +37,23 @@ void XWindowInterface::enableBlurBehind(QWindow *view, bool enable, const QRegio
     KWindowEffects::enableBlurBehind(view->winId(), enable, region);
 }
 
-ApplicationItem XWindowInterface::requestInfo(quint64 wid)
+WId XWindowInterface::activeWindow()
 {
-    ApplicationItem item;
+    return KWindowSystem::activeWindow();
+}
+
+void XWindowInterface::minimizeWindow(WId win)
+{
+    KWindowSystem::minimizeWindow(win);
+}
+
+void XWindowInterface::forceActiveWindow(WId win)
+{
+    KWindowSystem::forceActiveWindow(win);
+}
+
+QMap<QString, QVariant> XWindowInterface::requestInfo(quint64 wid)
+{
     const KWindowInfo winfo { wid, NET::WMFrameExtents
                 | NET::WMWindowType
                 | NET::WMGeometry
@@ -51,18 +65,20 @@ ApplicationItem XWindowInterface::requestInfo(quint64 wid)
                 | NET::WM2Activities
                 | NET::WM2AllowedActions
                 | NET::WM2TransientFor };
-    // const auto winClass = QString(winfo.windowClassName());
-    const auto winClass = QString(winfo.windowClassClass().toLower());
+    QMap<QString, QVariant> result;
+    const QString winClass = QString(winfo.windowClassClass());
 
-    item.winId = wid;
-    item.iconName = winClass;
-    item.isActive = wid == KWindowSystem::activeWindow();
-    item.visibleName = winfo.visibleName();
+    result.insert("iconName", winClass.toLower());
+    result.insert("active", wid == KWindowSystem::activeWindow());
+    result.insert("visibleName", winfo.visibleName());
+    result.insert("id", winClass);
 
-    item.id = winClass;
-    item.wids.append(wid);
+    return result;
+}
 
-    return item;
+QString XWindowInterface::requestWindowClass(quint64 wid)
+{
+    return KWindowInfo(wid, 0, NET::WM2WindowClass).windowClassClass();
 }
 
 bool XWindowInterface::isAcceptableWindow(quint64 wid)

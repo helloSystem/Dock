@@ -23,6 +23,7 @@ set(SRCS
     src/mainwindow.cpp
     src/processprovider.cpp
     src/popuptips.cpp
+    src/trashmanager.cpp
     src/xwindowinterface.cpp
 )
 

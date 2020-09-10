@@ -23,6 +23,6 @@ Item {
         isActive: model.isActive
         popupText: model.visibleName
 
-        onClicked: root.toggleMinimize(model.appId)
+        onClicked: appModel.clicked(model.appId)
     }
 }

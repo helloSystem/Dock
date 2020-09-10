@@ -6,17 +6,17 @@
 class ApplicationItem
 {
 public:
-    quint64 winId;
-    QString windowClass;
+    QString id;
     QString iconName;
     QString visibleName;
     bool isActive;
 
-    QString id;
+    int currentActive = 0;
+
     QList<quint64> wids;
 
     bool operator==(ApplicationItem item) {
-        return item.winId == this->winId;
+        return item.id == this->id;
     }
 };
 
