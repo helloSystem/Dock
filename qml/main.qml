@@ -14,6 +14,8 @@ Rectangle {
         radius: parent.height * 0.3
         opacity: 0.6
         color: "white"
+        border.color: Qt.rgba(0, 0, 0, 0.1)
+        border.width: 1
     }
 
     DockItem {

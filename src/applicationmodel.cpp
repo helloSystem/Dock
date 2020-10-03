@@ -1,4 +1,5 @@
 #include "applicationmodel.h"
+#include "utils.h"
 
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
@@ -49,11 +50,6 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
 
     // FIXME: Implement me!
     return QVariant();
-}
-
-void ApplicationModel::clicked(quint64 wid)
-{
-    m_iface->clicked(wid);
 }
 
 void ApplicationModel::clicked(const QString &id)
@@ -140,6 +136,14 @@ void ApplicationModel::onWindowAdded(quint64 wid)
         item->visibleName = info.value("visibleName").toString();
         item->isActive = info.value("active").toBool();
         item->wids.append(wid);
+
+        QUrl desktopUrl = m_iface->desktopFileUrl(wid);
+        if (!desktopUrl.isEmpty()) {
+            QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopUrl.toString(QUrl::PreferLocalFile));
+            item->iconName = desktopInfo.value("Icon");
+            item->visibleName = desktopInfo.value("Name");
+        }
+
         m_appItems << item;
         endInsertRows();
         emit countChanged();

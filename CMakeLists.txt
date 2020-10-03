@@ -14,6 +14,10 @@ set(QT Core X11Extras Quick QuickControls2)
 find_package(Qt5 REQUIRED ${QT})
 find_package(KF5WindowSystem REQUIRED)
 
+# test
+find_package(KF5Config)
+find_package(KF5Service)
+
 set(SRCS
     src/applicationitem.h
     src/applicationmodel.cpp
@@ -21,10 +25,13 @@ set(SRCS
     src/iconthemeimageprovider.cpp
     src/main.cpp
     src/mainwindow.cpp
+    src/menu.cpp
     src/processprovider.cpp
     src/popuptips.cpp
     src/trashmanager.cpp
+    src/utils.cpp
     src/xwindowinterface.cpp
+    src/waylandinterface.cpp
 )
 
 set(RESOURCES
@@ -38,6 +45,10 @@ target_link_libraries(${PROJECT_NAME}
         Qt5::Quick
         Qt5::QuickControls2
         KF5::WindowSystem
+
+        KF5::ConfigCore
+        KF5::ConfigGui
+        KF5::Service
 )
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)

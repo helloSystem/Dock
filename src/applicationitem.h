@@ -9,7 +9,9 @@ public:
     QString id;
     QString iconName;
     QString visibleName;
-    bool isActive;
+    QString desktopPath;
+    bool isActive = false;
+    bool isPined = false;
 
     int currentActive = 0;
 

@@ -1,4 +1,6 @@
 #include "xwindowinterface.h"
+#include "utils.h"
+
 #include <QTimer>
 #include <QDebug>
 #include <QX11Info>
@@ -78,7 +80,7 @@ QMap<QString, QVariant> XWindowInterface::requestInfo(quint64 wid)
 
 QString XWindowInterface::requestWindowClass(quint64 wid)
 {
-    return KWindowInfo(wid, 0, NET::WM2WindowClass).windowClassClass();
+    return KWindowInfo(wid, NET::Supported, NET::WM2WindowClass).windowClassClass();
 }
 
 bool XWindowInterface::isAcceptableWindow(quint64 wid)
@@ -118,17 +120,6 @@ bool XWindowInterface::isAcceptableWindow(quint64 wid)
     return !NET::typeMatchesMask(info.windowType(NET::AllTypesMask), normalFlag);
 }
 
-void XWindowInterface::clicked(quint64 wid)
-{
-    KWindowInfo info(wid, NET::WMDesktop | NET::WMState | NET::XAWMState);
-
-    if (KWindowSystem::activeWindow() == wid) {
-        KWindowSystem::minimizeWindow(wid);
-    } else {
-        KWindowSystem::forceActiveWindow(wid);
-    }
-}
-
 void XWindowInterface::setViewStruts(QWindow *view, const QRect &rect)
 {
     NETExtendedStrut strut;
@@ -158,6 +149,14 @@ void XWindowInterface::startInitWindows()
     for (auto wid : KWindowSystem::self()->windows()) {
         onWindowadded(wid);
     }
+}
+
+QUrl XWindowInterface::desktopFileUrl(quint64 wid)
+{
+    const KWindowInfo info(wid, 0, NET::WM2WindowClass | NET::WM2DesktopFileName);
+    return Utils::instance()->windowUrlFromMetadata(info.windowClassClass(),
+                                             NETWinInfo(QX11Info::connection(), wid, QX11Info::appRootWindow(), NET::WMPid, NET::Properties2()).pid(),
+                                             info.windowClassName());
 }
 
 void XWindowInterface::onWindowadded(quint64 wid)

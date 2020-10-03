@@ -5,5 +5,6 @@
         <file>qml/AppItemDelegate.qml</file>
         <file>svg/launcher.svg</file>
         <file>qml/PopupTips.qml</file>
+        <file>qml/Menu.qml</file>
     </qresource>
 </RCC>

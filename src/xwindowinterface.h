@@ -26,10 +26,11 @@ public:
     QString requestWindowClass(quint64 wid);
     bool isAcceptableWindow(quint64 wid);
 
-    void clicked(quint64 wid);
     void setViewStruts(QWindow *view, const QRect &rect);
 
     void startInitWindows();
+
+    QUrl desktopFileUrl(quint64 wid);
 
 signals:
     void windowAdded(quint64 wid);
