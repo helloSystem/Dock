@@ -55,7 +55,7 @@ void MainWindow::updatePosition()
 {
     const QRect screenGeometry = screen()->geometry();
     QPoint position = {0, 0};
-    int margin = 10;
+    int margin = 0;
 
     // bottom
     position = { screenGeometry.x(), screenGeometry.y() + screenGeometry.height() - height()};
@@ -139,8 +139,8 @@ QRegion MainWindow::cornerMask(const QRect &rect, const int r)
     region += QRegion(corner, QRegion::Ellipse);
 
     // bottom left
-    corner.moveBottomLeft(rect.bottomLeft());
-    region += QRegion(corner, QRegion::Ellipse);
+//    corner.moveBottomLeft(rect.bottomLeft());
+ //   region += QRegion(corner, QRegion::Ellipse);
 
     // bottom right
     corner.moveBottomRight(rect.bottomRight());

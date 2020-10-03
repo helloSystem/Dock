@@ -11,8 +11,8 @@ Rectangle {
     Rectangle {
         id: background
         anchors.fill: parent
-        radius: parent.height * 0.3
-        opacity: 0.6
+        radius: 1
+        opacity: 0.2
         color: "white"
     }
 

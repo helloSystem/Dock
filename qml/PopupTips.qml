@@ -11,7 +11,7 @@ Rectangle {
     width: metrics.boundingRect.width + padding
     height: metrics.boundingRect.height + padding
 
-    radius: 4
+    radius: 3
     opacity: 0.6
     color: "white"
 
