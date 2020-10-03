@@ -2,7 +2,6 @@
 #include "iconthemeimageprovider.h"
 #include "processprovider.h"
 #include "popuptips.h"
-#include "menu.h"
 
 //  #include "trashmanager.h"
 
@@ -37,7 +36,6 @@ MainWindow::MainWindow(QQuickView *parent)
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
     engine()->rootContext()->setContextProperty("popupTips", new PopupTips);
-    engine()->rootContext()->setContextProperty("menu", new Menu);
     // engine()->rootContext()->setContextProperty("trashManager", new TrashManager);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 

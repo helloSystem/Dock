@@ -25,7 +25,6 @@ set(SRCS
     src/iconthemeimageprovider.cpp
     src/main.cpp
     src/mainwindow.cpp
-    src/menu.cpp
     src/processprovider.cpp
     src/popuptips.cpp
     src/trashmanager.cpp
