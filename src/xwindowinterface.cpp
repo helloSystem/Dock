@@ -159,7 +159,7 @@ void XWindowInterface::startInitWindows()
 
 QString XWindowInterface::desktopFilePath(quint64 wid)
 {
-    const KWindowInfo info(wid, NET::WMName, NET::WM2WindowClass | NET::WM2DesktopFileName);
+    const KWindowInfo info(wid, NET::Properties(), NET::WM2WindowClass | NET::WM2DesktopFileName);
     return Utils::instance()->desktopPathFromMetadata(info.windowClassClass(),
                                                       NETWinInfo(QX11Info::connection(), wid,
                                                                  QX11Info::appRootWindow(),

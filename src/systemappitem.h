@@ -16,6 +16,7 @@ public:
     QString comment;
     QString iconName;
     QString startupWMClass;
+    QString exec;
     QStringList args;
 };
 

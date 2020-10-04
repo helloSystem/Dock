@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QUrlQuery>
 #include <QSettings>
+#include <QDebug>
 
 #include <KWindowSystem>
 
@@ -45,6 +46,9 @@ QString Utils::cmdFromPid(quint32 pid)
             bin += ch;
     }
 
+    if (bin.split("/").last() == "electron")
+        return QString();
+
     if (bin.startsWith("/"))
         return bin.split("/").last();
 
@@ -80,14 +84,22 @@ QString Utils::desktopPathFromMetadata(const QString &appId, quint32 pid, const 
                 founded = true;
 
             // exec
-            if (!founded && item->args.first().startsWith(xWindowWMClassName, Qt::CaseInsensitive))
-                founded = true;
-
-            if (!founded && item->args.first().startsWith(cmdFromPid(pid), Qt::CaseInsensitive))
+            if (!founded && item->exec.startsWith(xWindowWMClassName, Qt::CaseInsensitive))
                 founded = true;
 
             if (!founded && desktopFileInfo.baseName().startsWith(xWindowWMClassName, Qt::CaseInsensitive))
                 founded = true;
+
+            // Match cmdlind
+            if (!founded) {
+                QString cmd = cmdFromPid(pid);
+                if (!cmd.isEmpty()) {
+                    if (item->exec.startsWith(cmdFromPid(pid), Qt::CaseInsensitive) ||
+                        item->exec.endsWith(cmdFromPid(pid), Qt::CaseInsensitive)) {
+                        founded = true;
+                    }
+                }
+            }
 
             if (founded) {
                 result = item->path;

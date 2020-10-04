@@ -124,6 +124,7 @@ void SystemAppMonitor::addApplication(const QString &filePath)
     item->comment = desktop.value("Comment").toString();
     item->iconName = desktop.value("Icon").toString();
     item->startupWMClass = desktop.value("StartupWMClass").toString();
+    item->exec = appExec;
     item->args = appExec.split(" ");
 
     m_items.append(item);
