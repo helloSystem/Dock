@@ -157,15 +157,15 @@ void XWindowInterface::startInitWindows()
     }
 }
 
-QUrl XWindowInterface::desktopFileUrl(quint64 wid)
+QString XWindowInterface::desktopFilePath(quint64 wid)
 {
     const KWindowInfo info(wid, 0, NET::WM2WindowClass | NET::WM2DesktopFileName);
-    return Utils::instance()->windowUrlFromMetadata(info.windowClassClass(),
-                                             NETWinInfo(QX11Info::connection(), wid,
-                                                        QX11Info::appRootWindow(),
-                                                        NET::WMPid,
-                                                        NET::Properties2()).pid(),
-                                             info.windowClassName());
+    return Utils::instance()->desktopPathFromMetadata(info.windowClassClass(),
+                                                      NETWinInfo(QX11Info::connection(), wid,
+                                                                 QX11Info::appRootWindow(),
+                                                                 NET::WMPid,
+                                                                 NET::Properties2()).pid(),
+                                                      info.windowClassName());
 }
 
 void XWindowInterface::onWindowadded(quint64 wid)

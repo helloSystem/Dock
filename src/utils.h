@@ -3,12 +3,9 @@
 
 #include <QObject>
 #include <QIcon>
-#include <QModelIndex>
 #include <QUrl>
 
-#include <KService>
-#include <KSharedConfig>
-
+class SystemAppMonitor;
 class Utils : public QObject
 {
     Q_OBJECT
@@ -33,14 +30,13 @@ public:
 
     explicit Utils(QObject *parent = nullptr);
 
-    QUrl windowUrlFromMetadata(const QString &appId, quint32 pid = 0,
-                               const QString &xWindowsWMClassName = QString());
-
-    QString readIconNameFromDesktop(const QString &desktopFile);
+    QString cmdFromPid(quint32 pid);
+    QString desktopPathFromMetadata(const QString &appId, quint32 pid = 0,
+                                    const QString &xWindowWMClassName = QString());
     QMap<QString, QString> readInfoFromDesktop(const QString &desktopFile);
 
-signals:
-
+private:
+    SystemAppMonitor *m_sysAppMonitor;
 };
 
 #endif // UTILS_H

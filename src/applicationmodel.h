@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include "applicationitem.h"
+#include "systemappmonitor.h"
 #include "xwindowinterface.h"
 
 class ApplicationModel : public QAbstractListModel
@@ -49,6 +50,7 @@ private:
 
 private:
     XWindowInterface *m_iface;
+    SystemAppMonitor *m_sysAppMonitor;
     QList<ApplicationItem *> m_appItems;
     int m_iconSize;
 };

@@ -6,6 +6,7 @@
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
       m_iface(XWindowInterface::instance()),
+      m_sysAppMonitor(SystemAppMonitor::self()),
       m_iconSize(88)
 {
     connect(m_iface, &XWindowInterface::windowAdded, this, &ApplicationModel::onWindowAdded);
@@ -217,9 +218,9 @@ void ApplicationModel::onWindowAdded(quint64 wid)
         item->isActive = info.value("active").toBool();
         item->wids.append(wid);
 
-        QUrl desktopUrl = m_iface->desktopFileUrl(wid);
-        if (!desktopUrl.isEmpty()) {
-            QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopUrl.toString(QUrl::PreferLocalFile));
+        QString desktopPath = m_iface->desktopFilePath(wid);
+        if (!desktopPath.isEmpty()) {
+            QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopPath);
             item->iconName = desktopInfo.value("Icon");
             item->visibleName = desktopInfo.value("Name");
         }

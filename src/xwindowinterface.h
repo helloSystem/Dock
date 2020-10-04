@@ -31,7 +31,7 @@ public:
 
     void startInitWindows();
 
-    QUrl desktopFileUrl(quint64 wid);
+    QString desktopFilePath(quint64 wid);
 
 signals:
     void windowAdded(quint64 wid);
