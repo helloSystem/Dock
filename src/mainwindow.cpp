@@ -49,6 +49,7 @@ MainWindow::MainWindow(QQuickView *parent)
     connect(this, &QQuickView::yChanged, this, &MainWindow::updatePosition);
     connect(m_appModel, &ApplicationModel::countChanged, this, &MainWindow::resizeWindow);
     connect(m_resizeAnimation, &QVariantAnimation::valueChanged, this, &MainWindow::onResizeValueChanged);
+    connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
     // connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
 }
 
@@ -121,7 +122,6 @@ void MainWindow::onResizeValueChanged(const QVariant &value)
     resize(s);
     updatePosition();
     updateBlurRegion();
-    updateViewStruts();
 }
 
 QRegion MainWindow::cornerMask(const QRect &rect, const int r)
