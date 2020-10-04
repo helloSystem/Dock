@@ -35,11 +35,14 @@ Item {
 
         MenuItem {
             text: model.isPined ? qsTr("Unpin") : qsTr("Pin")
-            onTriggered: {}
+            onTriggered: {
+                model.isPined ? appModel.unPin(model.appId) : appModel.pin(model.appId)
+            }
         }
 
         MenuItem {
             text: qsTr("Close All")
+            visible: model.windowCount !== 0
             onTriggered: appModel.closeAllByAppId(model.appId)
         }
     }
@@ -49,6 +52,7 @@ Item {
         iconName: model.iconName
         isActive: model.isActive
         popupText: model.visibleName
+        enableActivateDot: model.windowCount !== 0
 
         onClicked: appModel.clicked(model.appId)
         onRightClicked: contextMenu.open()

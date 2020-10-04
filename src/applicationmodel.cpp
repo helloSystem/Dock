@@ -127,8 +127,9 @@ void ApplicationModel::pin(const QString &appId)
     if (!item)
         return;
 
-    // Work in process
+    beginResetModel();
     item->isPined = true;
+    endResetModel();
 }
 
 void ApplicationModel::unPin(const QString &appId)
@@ -138,7 +139,20 @@ void ApplicationModel::unPin(const QString &appId)
     if (!item)
         return;
 
+    beginResetModel();
     item->isPined = false;
+    endResetModel();
+
+    // Need to be removed after unpin
+    if (item->wids.isEmpty()) {
+        int index = indexOf(item->id);
+        if (index != -1) {
+            beginRemoveRows(QModelIndex(), index, index);
+            m_appItems.removeAll(item);
+            endRemoveRows();
+            emit countChanged();
+        }
+    }
 }
 
 ApplicationItem *ApplicationModel::findItemByWId(quint64 wid)
@@ -223,18 +237,22 @@ void ApplicationModel::onWindowRemoved(quint64 wid)
     if (!item)
         return;
 
+    // Remove from wid list.
     item->wids.removeOne(wid);
+
     if (item->wids.isEmpty()) {
-        int index = indexOf(item->id);
+        // If it is not fixed to the dock, need to remove it.
+        if (!item->isPined) {
+            int index = indexOf(item->id);
 
-        if (index == -1)
-            return;
+            if (index == -1)
+                return;
 
-        beginRemoveRows(QModelIndex(), index, index);
-        m_appItems.removeAll(item);
-        endRemoveRows();
-
-        emit countChanged();
+            beginRemoveRows(QModelIndex(), index, index);
+            m_appItems.removeAll(item);
+            endRemoveRows();
+            emit countChanged();
+        }
     }
 }
 
