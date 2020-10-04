@@ -239,7 +239,9 @@ void ApplicationModel::onWindowRemoved(quint64 wid)
         return;
 
     // Remove from wid list.
+    beginResetModel();
     item->wids.removeOne(wid);
+    endResetModel();
 
     if (item->wids.isEmpty()) {
         // If it is not fixed to the dock, need to remove it.
