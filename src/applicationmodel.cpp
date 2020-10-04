@@ -13,7 +13,9 @@ ApplicationModel::ApplicationModel(QObject *parent)
     connect(m_iface, &XWindowInterface::windowRemoved, this, &ApplicationModel::onWindowRemoved);
     connect(m_iface, &XWindowInterface::activeChanged, this, &ApplicationModel::onActiveChanged);
 
-    m_iface->startInitWindows();
+    initPinedApplications();
+
+    QTimer::singleShot(100, m_iface, &XWindowInterface::startInitWindows);
 }
 
 int ApplicationModel::rowCount(const QModelIndex &parent) const
@@ -101,7 +103,14 @@ bool ApplicationModel::openNewInstance(const QString &appId)
 
     QProcess process;
     if (!item->exec.isEmpty()) {
-        process.setProgram(item->exec);
+        QStringList args = item->exec.split(" ");
+        process.setProgram(args.first());
+        args.removeFirst();
+
+        if (!args.isEmpty()) {
+            process.setArguments(args);
+        }
+
     } else {
         process.setProgram(appId);
     }
@@ -131,6 +140,8 @@ void ApplicationModel::pin(const QString &appId)
     beginResetModel();
     item->isPined = true;
     endResetModel();
+
+    savePinAndUnPinList();
 }
 
 void ApplicationModel::unPin(const QString &appId)
@@ -154,6 +165,8 @@ void ApplicationModel::unPin(const QString &appId)
             emit countChanged();
         }
     }
+
+    savePinAndUnPinList();
 }
 
 ApplicationItem *ApplicationModel::findItemByWId(quint64 wid)
@@ -198,6 +211,58 @@ int ApplicationModel::indexOf(const QString &id)
     return -1;
 }
 
+void ApplicationModel::initPinedApplications()
+{
+    QSettings settings(QSettings::UserScope, "cyberos", "dock_pined");
+    QStringList groups = settings.childGroups();
+
+    for (int i = 0; i < groups.size(); ++i) {
+        for (const QString &id : groups) {
+            settings.beginGroup(id);
+            int index = settings.value("Index").toInt();
+
+            if (index == i) {
+                beginInsertRows(QModelIndex(), rowCount(), rowCount());
+                ApplicationItem *item = new ApplicationItem;
+                item->iconName = settings.value("IconName").toString();
+                item->visibleName = settings.value("visibleName").toString();
+                item->exec = settings.value("Exec").toString();
+                item->id = id;
+                item->isPined = true;
+                m_appItems.append(item);
+                endInsertRows();
+                emit countChanged();
+                settings.endGroup();
+                break;
+            } else {
+                settings.endGroup();
+            }
+        }
+    }
+}
+
+void ApplicationModel::savePinAndUnPinList()
+{
+    QSettings settings(QSettings::UserScope, "cyberos", "dock_pined");
+    settings.clear();
+
+    int index = 0;
+
+    for (ApplicationItem *item : m_appItems) {
+        if (item->isPined) {
+            settings.beginGroup(item->id);
+            settings.setValue("IconName", item->iconName);
+            settings.setValue("visibleName", item->visibleName);
+            settings.setValue("Exec", item->exec);
+            settings.setValue("Index", index);
+            settings.endGroup();
+            ++index;
+        }
+    }
+
+    settings.sync();
+}
+
 void ApplicationModel::onWindowAdded(quint64 wid)
 {
     QMap<QString, QVariant> info = m_iface->requestInfo(wid);
@@ -206,7 +271,11 @@ void ApplicationModel::onWindowAdded(quint64 wid)
     if (contains(id)) {
         for (ApplicationItem *item : m_appItems) {
             if (item->id == id) {
+                // Need to update application active status.
+                beginResetModel();
                 item->wids.append(wid);
+                item->isActive = info.value("active").toBool();
+                endResetModel();
             }
         }
     } else {
@@ -223,6 +292,7 @@ void ApplicationModel::onWindowAdded(quint64 wid)
             QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopPath);
             item->iconName = desktopInfo.value("Icon");
             item->visibleName = desktopInfo.value("Name");
+            item->exec = desktopInfo.value("Exec");
         }
 
         m_appItems << item;

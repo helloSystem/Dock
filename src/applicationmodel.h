@@ -44,6 +44,8 @@ private:
     ApplicationItem *findItemById(const QString &id);
     bool contains(const QString &id);
     int indexOf(const QString &id);
+    void initPinedApplications();
+    void savePinAndUnPinList();
     void onWindowAdded(quint64 wid);
     void onWindowRemoved(quint64 wid);
     void onActiveChanged(quint64 wid);

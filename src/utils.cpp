@@ -114,12 +114,23 @@ QString Utils::desktopPathFromMetadata(const QString &appId, quint32 pid, const 
 QMap<QString, QString> Utils::readInfoFromDesktop(const QString &desktopFile)
 {
     QMap<QString, QString> info;
-    QSettings desktop(desktopFile, QSettings::IniFormat);
-    desktop.setIniCodec("UTF-8");
-    desktop.beginGroup("Desktop Entry");
+    for (SystemAppItem *item : m_sysAppMonitor->applications()) {
+        if (item->path == desktopFile) {
+            info.insert("Icon", item->iconName);
+            info.insert("Name", item->name);
+            info.insert("Exec", item->exec);
+        }
+    }
 
-    info.insert("Icon", desktop.value("Icon").toString());
-    info.insert("Name", desktop.value("Name").toString());
+
+//    QMap<QString, QString> info;
+//    QSettings desktop(desktopFile, QSettings::IniFormat);
+//    desktop.setIniCodec("UTF-8");
+//    desktop.beginGroup("Desktop Entry");
+
+//    info.insert("Icon", desktop.value("Icon").toString());
+//    info.insert("Name", desktop.value("Name").toString());
+//    info.insert("Exec", desktop.value("Exec").toString());
 
     return info;
 }
