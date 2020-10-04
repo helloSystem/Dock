@@ -20,6 +20,7 @@ public:
 
     WId activeWindow();
     void minimizeWindow(WId win);
+    void closeWindow(WId id);
     void forceActiveWindow(WId win);
 
     QMap<QString, QVariant> requestInfo(quint64 wid);

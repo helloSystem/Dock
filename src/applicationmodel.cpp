@@ -1,5 +1,7 @@
-#include "applicationmodel.h"
+﻿#include "applicationmodel.h"
 #include "utils.h"
+
+#include <QProcess>
 
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
@@ -24,9 +26,11 @@ QHash<int, QByteArray> ApplicationModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[AppIdRole] = "appId";
-    roles[IconName] = "iconName";
-    roles[VisibleName] = "visibleName";
+    roles[IconNameRole] = "iconName";
+    roles[VisibleNameRole] = "visibleName";
     roles[ActiveRole] = "isActive";
+    roles[WindowCountRole] = "windowCount";
+    roles[IsPinedRole] = "isPined";
     return roles;
 }
 
@@ -40,12 +44,18 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case AppIdRole:
         return item->id;
-    case IconName:
+    case IconNameRole:
         return item->iconName;
-    case VisibleName:
+    case VisibleNameRole:
         return item->visibleName;
     case ActiveRole:
         return item->isActive;
+    case WindowCountRole:
+        return item->wids.count();
+    case IsPinedRole:
+        return item->isPined;
+    default:
+        return QVariant();
     }
 
     // FIXME: Implement me!
@@ -59,9 +69,15 @@ void ApplicationModel::clicked(const QString &id)
     if (!item)
         return;
 
+    // Application Item that has been pined,
+    // We need to open it.
     if (item->wids.isEmpty()) {
         // open application
-    } else if (item->wids.count() > 1) {
+        openNewInstance(item->id);
+    }
+    // Multiple windows have been opened and need to switch between them,
+    // The logic here needs to be improved.
+    else if (item->wids.count() > 1) {
         item->currentActive++;
 
         if (item->currentActive == item->wids.count())
@@ -73,6 +89,56 @@ void ApplicationModel::clicked(const QString &id)
     } else {
         m_iface->forceActiveWindow(item->wids.first());
     }
+}
+
+bool ApplicationModel::openNewInstance(const QString &appId)
+{
+    ApplicationItem *item = findItemById(appId);
+
+    if (!item)
+        return false;
+
+    QProcess process;
+    if (!item->exec.isEmpty()) {
+        process.setProgram(item->exec);
+    } else {
+        process.setProgram(appId);
+    }
+
+    return process.startDetached();
+}
+
+void ApplicationModel::closeAllByAppId(const QString &appId)
+{
+    ApplicationItem *item = findItemById(appId);
+
+    if (!item)
+        return;
+
+    for (quint64 wid : item->wids) {
+        m_iface->closeWindow(wid);
+    }
+}
+
+void ApplicationModel::pin(const QString &appId)
+{
+    ApplicationItem *item = findItemById(appId);
+
+    if (!item)
+        return;
+
+    // Work in process
+    item->isPined = true;
+}
+
+void ApplicationModel::unPin(const QString &appId)
+{
+    ApplicationItem *item = findItemById(appId);
+
+    if (!item)
+        return;
+
+    item->isPined = false;
 }
 
 ApplicationItem *ApplicationModel::findItemByWId(quint64 wid)

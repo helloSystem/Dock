@@ -12,7 +12,7 @@ Rectangle {
         id: background
         anchors.fill: parent
         radius: parent.height * 0.3
-        opacity: 0.6
+        opacity: 0.5
         color: "white"
         border.color: Qt.rgba(0, 0, 0, 0.1)
         border.width: 1

@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(QT Core X11Extras Quick QuickControls2)
+set(QT Core Widgets Quick QuickControls2 X11Extras)
 find_package(Qt5 REQUIRED ${QT})
 find_package(KF5WindowSystem REQUIRED)
 
@@ -40,11 +40,12 @@ set(RESOURCES
 add_executable(${PROJECT_NAME} ${SRCS} ${DBUS_SRCS} ${RESOURCES})
 target_link_libraries(${PROJECT_NAME}
         Qt5::Core
-        Qt5::X11Extras
+        Qt5::Widgets
         Qt5::Quick
         Qt5::QuickControls2
-        KF5::WindowSystem
+        Qt5::X11Extras
 
+        KF5::WindowSystem
         KF5::ConfigCore
         KF5::ConfigGui
         KF5::Service

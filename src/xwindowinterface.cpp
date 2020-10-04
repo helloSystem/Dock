@@ -49,6 +49,12 @@ void XWindowInterface::minimizeWindow(WId win)
     KWindowSystem::minimizeWindow(win);
 }
 
+void XWindowInterface::closeWindow(WId id)
+{
+    // FIXME: Why there is no such thing in KWindowSystem??
+    NETRootInfo(QX11Info::connection(), NET::CloseWindow).closeWindowRequest(id);
+}
+
 void XWindowInterface::forceActiveWindow(WId win)
 {
     KWindowSystem::forceActiveWindow(win);
@@ -155,7 +161,10 @@ QUrl XWindowInterface::desktopFileUrl(quint64 wid)
 {
     const KWindowInfo info(wid, 0, NET::WM2WindowClass | NET::WM2DesktopFileName);
     return Utils::instance()->windowUrlFromMetadata(info.windowClassClass(),
-                                             NETWinInfo(QX11Info::connection(), wid, QX11Info::appRootWindow(), NET::WMPid, NET::Properties2()).pid(),
+                                             NETWinInfo(QX11Info::connection(), wid,
+                                                        QX11Info::appRootWindow(),
+                                                        NET::WMPid,
+                                                        NET::Properties2()).pid(),
                                              info.windowClassName());
 }
 

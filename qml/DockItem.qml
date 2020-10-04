@@ -17,6 +17,7 @@ Rectangle {
     property var iconName
 
     signal clicked()
+    signal rightClicked()
 
     color: "transparent"
 
@@ -74,8 +75,14 @@ Rectangle {
         id: iconArea
         anchors.fill: icon
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onClicked: dockItem.clicked()
+        onClicked: {
+            if (mouse.button === Qt.LeftButton)
+                dockItem.clicked()
+            else if (mouse.button === Qt.RightButton)
+                dockItem.rightClicked()
+        }
 
         onEntered: {
             icon.state = "mouseIn"

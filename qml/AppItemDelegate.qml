@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
+import Qt.labs.platform 1.0
 
 Item {
     id: appItem
@@ -17,6 +18,32 @@ Item {
 
     signal onClicked
 
+    Menu {
+        id: contextMenu
+
+        MenuItem {
+            text: qsTr("Open")
+            visible: model.windowCount === 0
+            onTriggered: appModel.openNewInstance(model.appId)
+        }
+
+        MenuItem {
+            text: model.visibleName
+            visible: model.windowCount > 0
+            onTriggered: appModel.openNewInstance(model.appId)
+        }
+
+        MenuItem {
+            text: model.isPined ? qsTr("Unpin") : qsTr("Pin")
+            onTriggered: {}
+        }
+
+        MenuItem {
+            text: qsTr("Close All")
+            onTriggered: appModel.closeAllByAppId(model.appId)
+        }
+    }
+
     DockItem {
         anchors.fill: parent
         iconName: model.iconName
@@ -24,5 +51,6 @@ Item {
         popupText: model.visibleName
 
         onClicked: appModel.clicked(model.appId)
+        onRightClicked: contextMenu.open()
     }
 }

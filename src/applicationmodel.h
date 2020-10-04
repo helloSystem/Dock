@@ -12,10 +12,12 @@ class ApplicationModel : public QAbstractListModel
 public:
     enum Roles {
         AppIdRole = Qt::UserRole + 1,
-        IconName,
-        IconSize,
-        VisibleName,
-        ActiveRole
+        IconNameRole,
+        IconSizeRole,
+        VisibleNameRole,
+        ActiveRole,
+        WindowCountRole,
+        IsPinedRole
     };
 
     explicit ApplicationModel(QObject *parent = nullptr);
@@ -25,6 +27,11 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     Q_INVOKABLE void clicked(const QString &id);
+
+    Q_INVOKABLE bool openNewInstance(const QString &appId);
+    Q_INVOKABLE void closeAllByAppId(const QString &appId);
+    Q_INVOKABLE void pin(const QString &appId);
+    Q_INVOKABLE void unPin(const QString &appId);
 
     int iconSize() { return m_iconSize; }
 
