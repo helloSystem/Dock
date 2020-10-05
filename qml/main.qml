@@ -61,5 +61,9 @@ Rectangle {
         iconSizeRatio: 0.75
         enableActivateDot: false
         iconName: "user-trash-empty"
+
+        onClicked: {
+            process.start("gio", ["open", "trash:///"])
+        }
     }
 }

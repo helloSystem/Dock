@@ -7,9 +7,10 @@ ProcessProvider::ProcessProvider(QObject *parent)
 
 }
 
-bool ProcessProvider::start(const QString &exec)
+bool ProcessProvider::start(const QString &exec, QStringList args)
 {
     QProcess process;
     process.setProgram(exec);
+    process.setArguments(args);
     return process.startDetached();
 }
