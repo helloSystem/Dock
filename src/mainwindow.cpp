@@ -79,12 +79,26 @@ void MainWindow::resizeWindow()
 
     QSize screenSize = screen()->size();
 
-    // vertical
-    // const QSize size{m_iconSize, screenSize.height()};
+    // Launcher and Trash
+    int fixedItemCount = 2;
 
     // horizontal
-    QSize newSize { screenSize.width(), m_appModel->iconSize() };
-    newSize.setWidth((m_appModel->rowCount() + 2) * m_appModel->iconSize());
+    int maxWidth = screenSize.width();
+    int calcWidth = m_appModel->iconSize() * fixedItemCount;
+
+    // Calculate the width to ensure that the window width
+    // cannot be greater than the screen width.
+    for (int i = 1; i <= m_appModel->rowCount(); ++i) {
+        calcWidth += m_appModel->iconSize();
+
+        // Has exceeded the screen width.
+        if (calcWidth >= maxWidth) {
+            calcWidth -= m_appModel->iconSize();
+            break;
+        }
+    }
+
+    QSize newSize { calcWidth, m_appModel->iconSize() };
 
     if (m_resizeAnimation->state() == QVariantAnimation::Running) {
         m_resizeAnimation->stop();
