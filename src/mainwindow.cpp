@@ -50,7 +50,6 @@ MainWindow::MainWindow(QQuickView *parent)
     connect(m_appModel, &ApplicationModel::countChanged, this, &MainWindow::resizeWindow);
     connect(m_resizeAnimation, &QVariantAnimation::valueChanged, this, &MainWindow::onResizeValueChanged);
     connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
-    // connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
 }
 
 void MainWindow::updatePosition()
@@ -75,8 +74,6 @@ void MainWindow::updatePosition()
 
 void MainWindow::resizeWindow()
 {
-    setVisible(true);
-
     QSize screenSize = screen()->size();
 
     // Launcher and Trash
@@ -91,7 +88,7 @@ void MainWindow::resizeWindow()
     for (int i = 1; i <= m_appModel->rowCount(); ++i) {
         calcWidth += m_appModel->iconSize();
 
-        // Has exceeded the screen width.
+        // Has exceeded the screen width
         if (calcWidth >= maxWidth) {
             calcWidth -= m_appModel->iconSize();
             break;
@@ -104,17 +101,26 @@ void MainWindow::resizeWindow()
         m_resizeAnimation->stop();
     }
 
+    // Set zoom in and zoom out the ease curve
     if (newSize.width() > size().width()) {
         m_resizeAnimation->setEasingCurve(QEasingCurve::InOutCubic);
     } else {
         m_resizeAnimation->setEasingCurve(QEasingCurve::InCubic);
     }
 
-    XWindowInterface::instance()->enableBlurBehind(this, false);
-    m_resizeAnimation->setDuration(250);
-    m_resizeAnimation->setStartValue(this->size());
-    m_resizeAnimation->setEndValue(newSize);
-    m_resizeAnimation->start();
+    // If the window size has not changed, there is no need to resize
+    if (this->size() != newSize) {
+        // Disable blur during resizing
+        XWindowInterface::instance()->enableBlurBehind(this, false);
+
+        // Start the resize animation
+        m_resizeAnimation->setDuration(250);
+        m_resizeAnimation->setStartValue(this->size());
+        m_resizeAnimation->setEndValue(newSize);
+        m_resizeAnimation->start();
+    }
+
+    setVisible(true);
 }
 
 void MainWindow::updateBlurRegion()
