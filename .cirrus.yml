@@ -1,0 +1,22 @@
+freebsd_instance:
+  image: freebsd-12-1-release-amd64
+  
+task:
+  # This name gets reported as a build status in GitHub
+  name: freebsd-12-1-release-amd64
+  stateful: false
+  setup_script:
+    - pkg install -y curl zip pkgconf cmake qt5-qmake qt5-buildtools qt5-quickcontrols2 kf5-kwindowsystem
+  test_script:
+    - mkdir build ; cd build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    - make -j$(sysctl -n hw.ncpu)
+    - make DESTDIR=Dock.AppDir -j$(sysctl -n hw.ncpu) install
+    - mkdir -p Menubar.AppDir/usr/share/icons/hicolor/64x64/apps/
+    # cp ../Dock.png Dock.AppDir/usr/share/icons/hicolor/64x64/apps/
+    - ( cd Dock.AppDir/ ; ln -s ./usr/bin/panda-dock ./AppRun )
+    - rm -rf Dock.AppDir/usr/include
+    - find Dock.AppDir/
+    - zip --symlinks -r Dock_FreeBSD.zip Dock.AppDir/
+    - curl --upload-file ./Dock_FreeBSD.zip https://transfer.sh/Dock_FreeBSD.zip
+  only_if: $CIRRUS_BRANCH == 'master'
