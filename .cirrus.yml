@@ -1,5 +1,9 @@
 freebsd_instance:
   image: freebsd-12-1-release-amd64
+
+env:
+  CIRRUS_CLONE_DEPTH: 1
+  GITHUB_TOKEN: ENCRYPTED[!0f42e3f70fd51cdeddfe7e98160982fc9efe7e8a26869b725fcd5de05d067a7100b994cf52f0f1b470a983148e0b8ec2!]
   
 task:
   # This name gets reported as a build status in GitHub
@@ -18,5 +22,6 @@ task:
     - rm -rf Dock.AppDir/usr/include
     - find Dock.AppDir/
     - zip --symlinks -r Dock_FreeBSD.zip Dock.AppDir/
-    - curl --upload-file ./Dock_FreeBSD.zip https://transfer.sh/Dock_FreeBSD.zip
-  only_if: $CIRRUS_BRANCH == 'master'
+    # curl --upload-file ./Filer_FreeBSD.zip https://transfer.sh/Filer_FreeBSD.zip
+    - case "$CIRRUS_BRANCH" in *pull/*) echo skipping since PR ;; * ) wget https://github.com/tcnksm/ghr/files/5247714/ghr.zip ; unzip ghr.zip ; rm ghr.zip ; ./ghr -replace -t "${GITHUB_TOKEN}" -u "${CIRRUS_REPO_OWNER}" -r "${CIRRUS_REPO_NAME}" -c "${CIRRUS_CHANGE_IN_REPO}" continuous "${CIRRUS_WORKING_DIR}"/build/*zip ; esac
+  only_if: $CIRRUS_TAG != 'continuous'
