@@ -18,7 +18,7 @@ task:
     - make DESTDIR=Dock.AppDir -j$(sysctl -n hw.ncpu) install
     - mkdir -p Menubar.AppDir/usr/share/icons/hicolor/64x64/apps/
     # cp ../Dock.png Dock.AppDir/usr/share/icons/hicolor/64x64/apps/
-    - ( cd Dock.AppDir/usr/bin ; ln -s ./panda-dock ../../AppRun )
+    - ( cd Dock.AppDir/ ; ln -s usr/bin/panda-dock AppRun )
     - rm -rf Dock.AppDir/usr/include
     - find Dock.AppDir/
     - zip --symlinks -r Dock_FreeBSD.zip Dock.AppDir/
