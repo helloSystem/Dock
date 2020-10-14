@@ -27,6 +27,10 @@ make
 sudo make install
 ```
 
+## Acknowledgments
+
+Dock is based on https://github.com/cyberos/cyber-dock by rekols.
+
 ## License
 
 This project has been licensed by GPLv3.
