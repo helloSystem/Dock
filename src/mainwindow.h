@@ -4,7 +4,9 @@
 #include <QQuickView>
 #include <QVariantAnimation>
 #include <QTimer>
+
 #include "applicationmodel.h"
+#include "popuptips.h"
 
 class MainWindow : public QQuickView
 {
@@ -24,6 +26,7 @@ private:
 
 private:
     ApplicationModel *m_appModel;
+    PopupTips *m_popupTips;
     QVariantAnimation *m_resizeAnimation;
     int m_maxLength;
 };

@@ -1,9 +1,6 @@
 #include "mainwindow.h"
 #include "iconthemeimageprovider.h"
 #include "processprovider.h"
-#include "popuptips.h"
-
-//  #include "trashmanager.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -23,6 +20,7 @@
 MainWindow::MainWindow(QQuickView *parent)
     : QQuickView(parent),
       m_appModel(new ApplicationModel),
+      m_popupTips(new PopupTips),
       m_resizeAnimation(new QVariantAnimation(this))
 {
     setDefaultAlphaBuffer(true);
@@ -35,8 +33,7 @@ MainWindow::MainWindow(QQuickView *parent)
 
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
-    engine()->rootContext()->setContextProperty("popupTips", new PopupTips);
-    // engine()->rootContext()->setContextProperty("trashManager", new TrashManager);
+    engine()->rootContext()->setContextProperty("popupTips", m_popupTips);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);
@@ -74,6 +71,10 @@ void MainWindow::updatePosition()
 
 void MainWindow::resizeWindow()
 {
+    // Change the window size means that the number of dock items changes
+    // Need to hide popup tips.
+    m_popupTips->hide();
+
     QSize screenSize = screen()->size();
 
     // Launcher and Trash
