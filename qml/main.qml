@@ -23,11 +23,12 @@ Rectangle {
 
         iconSizeRatio: 0.75
         enableActivateDot: false
-        iconName: "qrc:/svg/launcher.svg"
+        // iconName: "qrc:/svg/launcher.svg"
+        iconName: "folder"
         popupText: qsTr("Launcher")
 
         onClicked: {
-            process.start("cyber-launcher")
+            process.start("launch", ["Filer.AppDir", "/Applications"])
         }
     }
 
