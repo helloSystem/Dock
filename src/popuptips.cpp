@@ -13,14 +13,14 @@
 PopupTips::PopupTips(QQuickView *parent)
     : QQuickView(parent)
 {
+    engine()->rootContext()->setContextProperty("Settings", DockSettings::self());
+
     setFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus | Qt::ToolTip);
     setResizeMode(QQuickView::SizeViewToRootObject);
     setClearBeforeRendering(true);
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
     setSource(QUrl(QStringLiteral("qrc:/qml/PopupTips.qml")));
-
-    engine()->rootContext()->setContextProperty("Settings", DockSettings::self());
 }
 
 void PopupTips::popup(const QPointF point, const QString &text)
