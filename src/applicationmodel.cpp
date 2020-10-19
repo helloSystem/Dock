@@ -213,7 +213,7 @@ int ApplicationModel::indexOf(const QString &id)
 
 void ApplicationModel::initPinedApplications()
 {
-    QSettings settings(QSettings::UserScope, "cyberos", "dock_pined");
+    QSettings settings(QSettings::UserScope, "cyberos", "dock_pinned");
     QStringList groups = settings.childGroups();
 
     for (int i = 0; i < groups.size(); ++i) {
@@ -244,7 +244,7 @@ void ApplicationModel::initPinedApplications()
 
 void ApplicationModel::savePinAndUnPinList()
 {
-    QSettings settings(QSettings::UserScope, "cyberos", "dock_pined");
+    QSettings settings(QSettings::UserScope, "cyberos", "dock_pinned");
     settings.clear();
 
     int index = 0;
