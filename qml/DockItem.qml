@@ -8,8 +8,9 @@ Rectangle {
 
     property bool enableActivateDot: true
     property bool isActive: false
-    property var activateDotColor: "#2E64E6"
-    property var inactiveDotColor: "#000000"
+
+    property var activateDotColor: root.activateDotColor
+    property var inactiveDotColor: root.inactiveDotColor
 
     property var popupText
 
@@ -17,6 +18,7 @@ Rectangle {
     property var iconName
 
     signal clicked()
+    signal rightClicked()
 
     color: "transparent"
 
@@ -74,17 +76,23 @@ Rectangle {
         id: iconArea
         anchors.fill: icon
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onClicked: dockItem.clicked()
-
-        onEntered: {
-            icon.state = "mouseIn"
-            popupTips.popup(dockItem.mapToGlobal(0, 0), popupText)
+        onClicked: {
+            if (mouse.button === Qt.LeftButton)
+                dockItem.clicked()
+            else if (mouse.button === Qt.RightButton)
+                dockItem.rightClicked()
         }
 
-        onExited: {
-            icon.state = "mouseOut"
-            popupTips.hide()
+        onContainsMouseChanged: {
+            if (containsMouse) {
+                icon.state = "mouseIn"
+                popupTips.popup(dockItem.mapToGlobal(0, 0), popupText)
+            } else {
+                icon.state = "mouseOut"
+                popupTips.hide()
+            }
         }
     }
 

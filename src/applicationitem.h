@@ -6,14 +6,20 @@
 class ApplicationItem
 {
 public:
+    // window class
     QString id;
+    // icon name
     QString iconName;
+    // visible name
     QString visibleName;
-    bool isActive;
-
-    int currentActive = 0;
+    QString desktopPath;
+    QString exec;
 
     QList<quint64> wids;
+
+    int currentActive = 0;
+    bool isActive = false;
+    bool isPined = false;
 
     bool operator==(ApplicationItem item) {
         return item.id == this->id;

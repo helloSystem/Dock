@@ -1,4 +1,5 @@
 #include "popuptips.h"
+#include "docksettings.h"
 #include "xwindowinterface.h"
 
 #include <QPainterPath>
@@ -12,6 +13,8 @@
 PopupTips::PopupTips(QQuickView *parent)
     : QQuickView(parent)
 {
+    engine()->rootContext()->setContextProperty("Settings", DockSettings::self());
+
     setFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus | Qt::ToolTip);
     setResizeMode(QQuickView::SizeViewToRootObject);
     setClearBeforeRendering(true);
