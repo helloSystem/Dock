@@ -19,7 +19,7 @@
 
 MainWindow::MainWindow(QQuickView *parent)
     : QQuickView(parent)
-    , m_settings(new DockSettings)
+    , m_settings(DockSettings::self())
     , m_appModel(new ApplicationModel)
     , m_popupTips(new PopupTips)
     , m_resizeAnimation(new QVariantAnimation(this))

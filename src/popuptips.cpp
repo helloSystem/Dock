@@ -1,4 +1,5 @@
 #include "popuptips.h"
+#include "docksettings.h"
 #include "xwindowinterface.h"
 
 #include <QPainterPath>
@@ -18,6 +19,8 @@ PopupTips::PopupTips(QQuickView *parent)
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
     setSource(QUrl(QStringLiteral("qrc:/qml/PopupTips.qml")));
+
+    engine()->rootContext()->setContextProperty("Settings", DockSettings::self());
 }
 
 void PopupTips::popup(const QPointF point, const QString &text)

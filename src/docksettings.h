@@ -17,6 +17,7 @@ public:
         Bottom
     };
 
+    static DockSettings *self();
     explicit DockSettings(QObject *parent = nullptr);
 
     bool darkMode() { return m_darkMode; }

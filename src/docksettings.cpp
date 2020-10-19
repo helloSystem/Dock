@@ -10,6 +10,16 @@ static const QString Service = "org.cyber.settings";
 static const QString ObjectPath = "/Theme";
 static const QString Interface = "org.cyber.Theme";
 
+static DockSettings *SELF = nullptr;
+
+DockSettings *DockSettings::self()
+{
+    if (SELF == nullptr)
+        SELF = new DockSettings;
+
+    return SELF;
+}
+
 DockSettings::DockSettings(QObject *parent)
     : QObject(parent)
     , m_darkMode(false)
