@@ -18,10 +18,11 @@
 #include <KWindowSystem>
 
 MainWindow::MainWindow(QQuickView *parent)
-    : QQuickView(parent),
-      m_appModel(new ApplicationModel),
-      m_popupTips(new PopupTips),
-      m_resizeAnimation(new QVariantAnimation(this))
+    : QQuickView(parent)
+    , m_settings(new DockSettings)
+    , m_appModel(new ApplicationModel)
+    , m_popupTips(new PopupTips)
+    , m_resizeAnimation(new QVariantAnimation(this))
 {
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QQuickView *parent)
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
     engine()->rootContext()->setContextProperty("popupTips", m_popupTips);
+    engine()->rootContext()->setContextProperty("Settings", m_settings);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);

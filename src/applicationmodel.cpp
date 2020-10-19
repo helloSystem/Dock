@@ -227,6 +227,7 @@ void ApplicationModel::initPinedApplications()
                 item->iconName = settings.value("IconName").toString();
                 item->visibleName = settings.value("visibleName").toString();
                 item->exec = settings.value("Exec").toString();
+                item->desktopPath = settings.value("DesktopPath").toString();
                 item->id = id;
                 item->isPined = true;
                 m_appItems.append(item);
@@ -255,6 +256,7 @@ void ApplicationModel::savePinAndUnPinList()
             settings.setValue("visibleName", item->visibleName);
             settings.setValue("Exec", item->exec);
             settings.setValue("Index", index);
+            settings.setValue("DesktopPath", item->desktopPath);
             settings.endGroup();
             ++index;
         }
@@ -293,6 +295,7 @@ void ApplicationModel::onWindowAdded(quint64 wid)
             item->iconName = desktopInfo.value("Icon");
             item->visibleName = desktopInfo.value("Name");
             item->exec = desktopInfo.value("Exec");
+            item->desktopPath = desktopPath;
         }
 
         m_appItems << item;

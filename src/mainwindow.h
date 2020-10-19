@@ -5,6 +5,7 @@
 #include <QVariantAnimation>
 #include <QTimer>
 
+#include "docksettings.h"
 #include "applicationmodel.h"
 #include "popuptips.h"
 
@@ -25,6 +26,7 @@ private:
     QRegion cornerMask(const QRect &rect, const int r);
 
 private:
+    DockSettings *m_settings;
     ApplicationModel *m_appModel;
     PopupTips *m_popupTips;
     QVariantAnimation *m_resizeAnimation;

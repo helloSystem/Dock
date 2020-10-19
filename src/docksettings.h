@@ -2,10 +2,13 @@
 #define DOCKSETTINGS_H
 
 #include <QObject>
+#include <QSettings>
+#include <QFileSystemWatcher>
 
 class DockSettings : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool darkMode READ darkMode NOTIFY darkModeChanged)
 
 public:
     enum Direction {
@@ -16,10 +19,17 @@ public:
 
     explicit DockSettings(QObject *parent = nullptr);
 
-    Q_INVOKABLE bool darkMode() { return m_darkMode; }
+    bool darkMode() { return m_darkMode; }
     void setDarkMode(bool enable);
 
     void setDirection(Direction direction);
+
+private slots:
+    void onDBusDarkModeChanged(bool darkMode);
+
+private:
+    void initDBusSignals();
+    void initData();
 
 Q_SIGNALS:
     void darkModeChanged();
@@ -28,6 +38,8 @@ Q_SIGNALS:
 private:
     bool m_darkMode;
     Direction m_direction;
+    QSettings *m_settings;
+    QFileSystemWatcher *m_fileWatcher;
 };
 
 #endif // DOCKSETTINGS_H

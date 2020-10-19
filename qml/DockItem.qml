@@ -8,8 +8,9 @@ Rectangle {
 
     property bool enableActivateDot: true
     property bool isActive: false
-    property var activateDotColor: "#2E64E6"
-    property var inactiveDotColor: "#000000"
+
+    property var activateDotColor: root.activateDotColor
+    property var inactiveDotColor: root.inactiveDotColor
 
     property var popupText
 
