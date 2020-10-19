@@ -85,14 +85,14 @@ Rectangle {
                 dockItem.rightClicked()
         }
 
-        onEntered: {
-            icon.state = "mouseIn"
-            popupTips.popup(dockItem.mapToGlobal(0, 0), popupText)
-        }
-
-        onExited: {
-            icon.state = "mouseOut"
-            popupTips.hide()
+        onContainsMouseChanged: {
+            if (containsMouse) {
+                icon.state = "mouseIn"
+                popupTips.popup(dockItem.mapToGlobal(0, 0), popupText)
+            } else {
+                icon.state = "mouseOut"
+                popupTips.hide()
+            }
         }
     }
 
