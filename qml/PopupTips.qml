@@ -14,13 +14,12 @@ Rectangle {
     radius: 3
     opacity: 0.6
     color: "white"
-
-    border.color: Qt.rgba(0, 0, 0, 0.2)
+    border.color: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.2) : Qt.rgba(0, 0, 0, 0.2)
     border.width: 1
 
     Label {
         id: label
-        color: "black"
+        color: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.7) : Qt.rgba(0, 0, 0, 0.7)
         text: "tips"
         anchors.centerIn: parent
     }

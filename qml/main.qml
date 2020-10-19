@@ -8,6 +8,12 @@ Rectangle {
 
     color: "transparent"
 
+    property color backgroundColor: Settings.darkMode ? Qt.rgba(0, 0, 0, 0.05) : Qt.rgba(255, 255, 255, 0.5)
+    property color foregroundColor: Settings.darkMode ? "white" : "black"
+    property color borderColor: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.1) : Qt.rgba(0, 0, 0, 0.05)
+    property color activateDotColor: Settings.darkMode ? "#4d81ff" : "#2E64E6"
+    property color inactiveDotColor: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.6) : Qt.rgba(0, 0, 0, 0.9)
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -60,5 +66,9 @@ Rectangle {
         iconSizeRatio: 0.75
         enableActivateDot: false
         iconName: "user-trash-empty"
+
+        onClicked: {
+            process.start("gio", ["open", "trash:///"])
+        }
     }
 }

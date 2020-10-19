@@ -10,7 +10,7 @@ class ProcessProvider : public QObject
 public:
     explicit ProcessProvider(QObject *parent = nullptr);
 
-    Q_INVOKABLE bool start(const QString &exec);
+    Q_INVOKABLE bool start(const QString &exec, QStringList args = QStringList());
 };
 
 #endif // PROCESSPROVIDER_H

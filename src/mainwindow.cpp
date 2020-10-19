@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "iconthemeimageprovider.h"
 #include "processprovider.h"
-#include "popuptips.h"
-//  #include "trashmanager.h"
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -20,9 +18,11 @@
 #include <KWindowSystem>
 
 MainWindow::MainWindow(QQuickView *parent)
-    : QQuickView(parent),
-      m_appModel(new ApplicationModel),
-      m_resizeAnimation(new QVariantAnimation(this))
+    : QQuickView(parent)
+    , m_settings(DockSettings::self())
+    , m_appModel(new ApplicationModel)
+    , m_popupTips(new PopupTips)
+    , m_resizeAnimation(new QVariantAnimation(this))
 {
     setDefaultAlphaBuffer(true);
     setColor(Qt::transparent);
@@ -34,8 +34,8 @@ MainWindow::MainWindow(QQuickView *parent)
 
     engine()->rootContext()->setContextProperty("appModel", m_appModel);
     engine()->rootContext()->setContextProperty("process", new ProcessProvider);
-    engine()->rootContext()->setContextProperty("popupTips", new PopupTips);
-    // engine()->rootContext()->setContextProperty("trashManager", new TrashManager);
+    engine()->rootContext()->setContextProperty("popupTips", m_popupTips);
+    engine()->rootContext()->setContextProperty("Settings", m_settings);
     engine()->addImageProvider("icontheme", new IconThemeImageProvider);
 
     setResizeMode(QQuickView::SizeRootObjectToView);
@@ -48,7 +48,7 @@ MainWindow::MainWindow(QQuickView *parent)
     connect(this, &QQuickView::yChanged, this, &MainWindow::updatePosition);
     connect(m_appModel, &ApplicationModel::countChanged, this, &MainWindow::resizeWindow);
     connect(m_resizeAnimation, &QVariantAnimation::valueChanged, this, &MainWindow::onResizeValueChanged);
-    // connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
+    connect(m_resizeAnimation, &QVariantAnimation::finished, this, &MainWindow::updateViewStruts);
 }
 
 void MainWindow::updatePosition()
@@ -73,32 +73,57 @@ void MainWindow::updatePosition()
 
 void MainWindow::resizeWindow()
 {
-    setVisible(true);
+    // Change the window size means that the number of dock items changes
+    // Need to hide popup tips.
+    m_popupTips->hide();
 
     QSize screenSize = screen()->size();
 
-    // vertical
-    // const QSize size{m_iconSize, screenSize.height()};
+    // Launcher and Trash
+    int fixedItemCount = 2;
 
     // horizontal
-    QSize newSize { screenSize.width(), m_appModel->iconSize() };
-    newSize.setWidth((m_appModel->rowCount() + 2) * m_appModel->iconSize());
+    int maxWidth = screenSize.width();
+    int calcWidth = m_appModel->iconSize() * fixedItemCount;
+
+    // Calculate the width to ensure that the window width
+    // cannot be greater than the screen width.
+    for (int i = 1; i <= m_appModel->rowCount(); ++i) {
+        calcWidth += m_appModel->iconSize();
+
+        // Has exceeded the screen width
+        if (calcWidth >= maxWidth) {
+            calcWidth -= m_appModel->iconSize();
+            break;
+        }
+    }
+
+    QSize newSize { calcWidth, m_appModel->iconSize() };
 
     if (m_resizeAnimation->state() == QVariantAnimation::Running) {
         m_resizeAnimation->stop();
     }
 
+    // Set zoom in and zoom out the ease curve
     if (newSize.width() > size().width()) {
         m_resizeAnimation->setEasingCurve(QEasingCurve::InOutCubic);
     } else {
         m_resizeAnimation->setEasingCurve(QEasingCurve::InCubic);
     }
 
-    XWindowInterface::instance()->enableBlurBehind(this, false);
-    m_resizeAnimation->setDuration(250);
-    m_resizeAnimation->setStartValue(this->size());
-    m_resizeAnimation->setEndValue(newSize);
-    m_resizeAnimation->start();
+    // If the window size has not changed, there is no need to resize
+    if (this->size() != newSize) {
+        // Disable blur during resizing
+        XWindowInterface::instance()->enableBlurBehind(this, false);
+
+        // Start the resize animation
+        m_resizeAnimation->setDuration(250);
+        m_resizeAnimation->setStartValue(this->size());
+        m_resizeAnimation->setEndValue(newSize);
+        m_resizeAnimation->start();
+    }
+
+    setVisible(true);
 }
 
 void MainWindow::updateBlurRegion()
@@ -120,7 +145,6 @@ void MainWindow::onResizeValueChanged(const QVariant &value)
     resize(s);
     updatePosition();
     updateBlurRegion();
-    updateViewStruts();
 }
 
 QRegion MainWindow::cornerMask(const QRect &rect, const int r)

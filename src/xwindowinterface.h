@@ -20,16 +20,18 @@ public:
 
     WId activeWindow();
     void minimizeWindow(WId win);
+    void closeWindow(WId id);
     void forceActiveWindow(WId win);
 
     QMap<QString, QVariant> requestInfo(quint64 wid);
     QString requestWindowClass(quint64 wid);
     bool isAcceptableWindow(quint64 wid);
 
-    void clicked(quint64 wid);
     void setViewStruts(QWindow *view, const QRect &rect);
 
     void startInitWindows();
+
+    QString desktopFilePath(quint64 wid);
 
 signals:
     void windowAdded(quint64 wid);
