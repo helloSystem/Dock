@@ -7,13 +7,13 @@
 On Arch Linux:
 
 ```shell
-sudo pacman -S gcc cmake qt5-base qt5-quickcontrols2 kwindowsystem
+sudo pacman -S gcc cmake qt5-base qt5-quickcontrols2 kwindowsystem kwayland
 ```
 
 On FreeBSD:
 
 ```
-sudo pkg install -y curl zip pkgconf cmake qt5-qmake qt5-buildtools qt5-quickcontrols2 kf5-kwindowsystem
+sudo pkg install -y curl zip pkgconf cmake qt5-qmake qt5-buildtools qt5-quickcontrols2 kf5-kwindowsystem kf5-kwayland
 ```
 
 
