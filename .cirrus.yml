@@ -10,7 +10,7 @@ task:
   name: freebsd-12-1-release-amd64
   stateful: false
   setup_script:
-    - pkg install -y curl wget zip pkgconf cmake qt5-qmake qt5-buildtools qt5-quickcontrols2 kf5-kwindowsystem
+    - pkg install -y curl wget zip pkgconf cmake qt5-qmake qt5-buildtools qt5-quickcontrols2 kf5-kwindowsystem kf5-kwayland
   test_script:
     - mkdir build ; cd build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
