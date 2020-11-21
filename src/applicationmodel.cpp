@@ -7,7 +7,7 @@ ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
       m_iface(XWindowInterface::instance()),
       m_sysAppMonitor(SystemAppMonitor::self()),
-      m_iconSize(88)
+      m_iconSize(64) // probono: Was 88
 {
     connect(m_iface, &XWindowInterface::windowAdded, this, &ApplicationModel::onWindowAdded);
     connect(m_iface, &XWindowInterface::windowRemoved, this, &ApplicationModel::onWindowRemoved);
