@@ -30,8 +30,8 @@ Rectangle {
         iconSizeRatio: 0.75
         enableActivateDot: false
         // iconName: "qrc:/svg/launcher.svg"
-        iconName: "folder"
-        popupText: qsTr("Launcher")
+        iconName: "gnome-do"
+        popupText: qsTr("Applications")
 
         onClicked: {
             process.start("launch", ["Filer.AppDir", "/Applications"])
