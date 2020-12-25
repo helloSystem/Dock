@@ -106,7 +106,7 @@ void MainWindow::resizeWindow()
 
     // Set zoom in and zoom out the ease curve
     if (newSize.width() > size().width()) {
-        m_resizeAnimation->setEasingCurve(QEasingCurve::InOutCubic);
+        m_resizeAnimation->setEasingCurve(QEasingCurve::OutCubic);
     } else {
         m_resizeAnimation->setEasingCurve(QEasingCurve::InCubic);
     }
@@ -117,12 +117,11 @@ void MainWindow::resizeWindow()
         XWindowInterface::instance()->enableBlurBehind(this, false);
 
         // Start the resize animation
-        m_resizeAnimation->setDuration(250);
+        m_resizeAnimation->setDuration(1);
         m_resizeAnimation->setStartValue(this->size());
         m_resizeAnimation->setEndValue(newSize);
         m_resizeAnimation->start();
     }
-
     setVisible(true);
 }
 

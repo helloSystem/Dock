@@ -14,6 +14,13 @@ Rectangle {
     property color activateDotColor: Settings.darkMode ? "#4d81ff" : "#2E64E6"
     property color inactiveDotColor: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.6) : Qt.rgba(0, 0, 0, 0.9)
 
+    y: 350
+    NumberAnimation on y { 
+        to: 0
+        duration: 5000
+        easing {type: Easing.OutQuad}
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent

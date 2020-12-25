@@ -42,6 +42,7 @@ Rectangle {
         states: ["mouseIn", "mouseOut"]
         state: "mouseOut"
 
+/*
         transitions: [
             Transition {
                 from: "*"
@@ -70,6 +71,7 @@ Rectangle {
                 }
             }
         ]
+*/
     }
 
     MouseArea {
