@@ -59,16 +59,16 @@ Rectangle {
                     properties: "scale"
                     from: 1
                     to: 5
-                    duration: 150
-                    easing.type: Easing.InCubic
+                    duration: 350
+                    easing.type: Easing.OutCubic
                 }
                 NumberAnimation {
                     target: icon
                     properties: "opacity"
                     from: 1
                     to: 0
-                    duration: 150
-                    easing.type: Easing.InCubic
+                    duration: 350
+                    easing.type: Easing.OutCubic
                 }
             }
             // After the animation, quickly go back to the normal state
