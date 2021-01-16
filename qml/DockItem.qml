@@ -49,25 +49,44 @@ Rectangle {
         states: ["mouseIn", "mouseOut"]
         state: "mouseOut"
 
-        ParallelAnimation {
+        SequentialAnimation {
             // FIXME: Is there a way to make this animation not confined within the box of the Dock? How?
             id: openAnimation
             running: false
-            NumberAnimation {
-                target: icon
-                properties: "scale"
-                from: 1
-                to: 5
-                duration: 150
-                easing.type: Easing.InCubic
+            ParallelAnimation {
+                NumberAnimation {
+                    target: icon
+                    properties: "scale"
+                    from: 1
+                    to: 5
+                    duration: 150
+                    easing.type: Easing.InCubic
+                }
+                NumberAnimation {
+                    target: icon
+                    properties: "opacity"
+                    from: 1
+                    to: 0
+                    duration: 150
+                    easing.type: Easing.InCubic
+                }
             }
-            NumberAnimation {
-                target: icon
-                properties: "opacity"
-                from: 1
-                to: 0
-                duration: 150
-                easing.type: Easing.InCubic
+            // After the animation, quickly go back to the normal state
+            ParallelAnimation {
+                NumberAnimation {
+                    target: icon
+                    properties: "scale"
+                    from: 5
+                    to: 1
+                    duration: 1
+                }
+                NumberAnimation {
+                    target: icon
+                    properties: "opacity"
+                    from: 0
+                    to: 1
+                    duration: 1
+                }
             }
         }
 
