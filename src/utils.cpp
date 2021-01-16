@@ -7,6 +7,7 @@
 #include <QUrlQuery>
 #include <QSettings>
 #include <QDebug>
+#include <QProcess>
 
 #include <KWindowSystem>
 
@@ -29,12 +30,98 @@ Utils::Utils(QObject *parent)
 
 // probono: Get launchableExecutable, applicationName, and icon for a given process ID
 // from .app bundles and .AppDir directories
-QMap<QString, QString> Utils::readInfoFromPid(quint32 pid)
+QMap<QString, QString> Utils::examinePotentialBundlePath(QString path)
 {
-    QMap<QString, QString> info;
+
+    qDebug() << "probono: path to be examined:" << path;
+
+    QMap<QString, QString> info; // Data structure to be returned
     QString launchableExecutable = "";
     QString applicationName = "";
     QString icon = "";
+
+    QFileInfo fileInfo = QFileInfo(path);
+    QString nameWithoutSuffix = QFileInfo(fileInfo.completeBaseName()).fileName();
+
+    // (Simplified) GNUstep .app bundle
+    if (path.toLower().endsWith(".app")) {
+        QFile executableFile(path.toUtf8() + "/" + nameWithoutSuffix);
+        if (executableFile.exists() && QFileInfo(executableFile).isExecutable()) {
+            qDebug() << "probono: We have an .app bundle";
+            launchableExecutable = QString(path + "/" + nameWithoutSuffix);
+            applicationName = nameWithoutSuffix;
+        }
+
+        QFile tiffFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".tiff");
+        if (tiffFile1.exists()) {
+            icon = QFileInfo(tiffFile1).canonicalFilePath();
+        }
+        QFile tiffFile2(path.toUtf8() + "/.dir.tiff");
+        if (tiffFile2.exists()) {
+            icon = QFileInfo(tiffFile2).canonicalFilePath();
+        }
+        QFile pngFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".png");
+        QFile svgFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".svg");
+        if (svgFile1.exists()) {
+            qDebug() << "probono: FIXME: There is a svg but we are not using it yet";
+        }
+        if (pngFile1.exists()) {
+            icon = QFileInfo(pngFile1).canonicalFilePath();
+        }
+    }
+
+    // ROX AppDir
+    QFile appRunFile(path.toUtf8() + "/AppRun");
+    if ((appRunFile.exists()) && QFileInfo(appRunFile).isExecutable()) {
+        launchableExecutable = QString(path + "/AppRun");
+        applicationName = nameWithoutSuffix;
+        qDebug() << "probono: We have an AppDir";
+
+        QFile dirIconFile(path.toUtf8() + "/.DirIcon");
+        if (dirIconFile.exists()) {
+            icon = QFileInfo(dirIconFile).canonicalFilePath();
+        }
+    }
+    if(icon != "")
+        info.insert("Icon", icon);
+    if(applicationName != "")
+        info.insert("Name", applicationName);
+    if(launchableExecutable != "")
+        info.insert("Exec", launchableExecutable);
+    return info;
+}
+
+QMap<QString, QString> Utils::readInfoFromPid(quint32 pid)
+{
+    QMap<QString, QString> info; // Data structure to be returned
+    QString launchableExecutable = "";
+    QString applicationName = "";
+    QString icon = "";
+
+    QStringList args; // Arguments of the proecss determined by pid
+
+#if __FreeBSD__
+
+    // On FreeBSD, /proc is optional and considered deprecated
+
+    QProcess *p = new QProcess();
+    p->setProgram("procstat");
+    QStringList arguments;
+    arguments << "--libxo=xml,pretty" << "arguments" << QString::number(pid);
+    p->setArguments(arguments);
+    p->start();
+    p->waitForFinished();
+    QList<QByteArray> lines = p->readAllStandardOutput().split('\n');
+    // TODO: Should probably take only the first three args into consideration
+    foreach (const QByteArray &line, lines) {
+        QString arg = QString::fromUtf8(line).trimmed();
+        if(arg.startsWith("<arguments>") and arg.endsWith("</arguments>")) {
+            arg = arg.replace("<arguments>", "").replace("</arguments>", "");
+            args.append(arg);
+        }
+    }
+
+#else
 
     // Read cmdline from /proc; make sure to get all zero-delimited parts of it
     // because our .app bundle or .AppDir might well be the second argument (e.g., 'python /Some/App.app/App args')
@@ -45,12 +132,14 @@ QMap<QString, QString> Utils::readInfoFromPid(quint32 pid)
     list.takeLast(); // Remove extraneous last item
 
     // Convert to QStringList
-    QStringList parts;
     foreach (const QByteArray &item, list) {
-        parts.append(QString::fromUtf8(item));
+        args.append(QString::fromUtf8(item));
     }
 
-    foreach (const QString &part, parts) { // FIXME: Consider only the first two parts as possible paths
+#endif
+
+    qDebug() << "probonopd: args" << args;
+    foreach (const QString &part, args) { // FIXME: Consider only the first two parts as possible paths
 
         // Determine whether we have an AppDir or .app bundle at hand and if yes, get launchableExecutable, applicationName, and icon
         // This code is similar to bundle.cpp in Filer; we might consider creating a static library for it
@@ -61,58 +150,23 @@ QMap<QString, QString> Utils::readInfoFromPid(quint32 pid)
             continue;
         }
 
-        qDebug() << "probono: path to be examined:" << path;
+        info = examinePotentialBundlePath(path);
 
-        QFileInfo fileInfo = QFileInfo(path);
-        QString nameWithoutSuffix = QFileInfo(fileInfo.completeBaseName()).fileName();
-
-        // (Simplified) GNUstep .app bundle
-        if (path.toLower().endsWith(".app")) {
-            QFile executableFile(path.toUtf8() + "/" + nameWithoutSuffix);
-            if (executableFile.exists() && QFileInfo(executableFile).isExecutable()) {
-                qDebug() << "probono: We have an .app bundle";
-                launchableExecutable = QString(path + "/" + nameWithoutSuffix);
-                applicationName = nameWithoutSuffix;
-            }
-
-            QFile tiffFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".tiff");
-            if (tiffFile1.exists()) {
-                icon = QFileInfo(tiffFile1).canonicalFilePath();
-            }
-            QFile tiffFile2(path.toUtf8() + "/.dir.tiff");
-            if (tiffFile2.exists()) {
-                icon = QFileInfo(tiffFile2).canonicalFilePath();
-            }
-            QFile pngFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".png");
-            QFile svgFile1(path.toUtf8() + "/Resources/" + nameWithoutSuffix.toUtf8() + ".svg");
-            if (svgFile1.exists()) {
-                qDebug() << "probono: FIXME: There is a svg but we are not using it yet";
-            }
-            if (pngFile1.exists()) {
-                icon = QFileInfo(pngFile1).canonicalFilePath();
-            }
+        if((info.value("Icon") != "") && (info.value("Name") != "") && (info.value("Exec") != "")) {
+            return info;
         }
 
-        // ROX AppDir
-        QFile appRunFile(path.toUtf8() + "/AppRun");
-        if ((appRunFile.exists()) && QFileInfo(appRunFile).isExecutable()) {
-            launchableExecutable = QString(path + "/AppRun");
-            applicationName = nameWithoutSuffix;
-            qDebug() << "probono: We have an AppDir";
+        // Also check the parent directory because it is not uncommon that the main executable is in a subdirectory
+        // TODO: "Search up" multiple levels until an .app bundle or .AppDir is found; how?
 
-            QFile dirIconFile(path.toUtf8() + "/.DirIcon");
-            if (dirIconFile.exists()) {
-                icon = QFileInfo(dirIconFile).canonicalFilePath();
-            }
+        QString parent_path = QFileInfo(part + "/../").canonicalPath(); // Resolve symlinks and get absolute path
+        qDebug() << "probono: Trying parent_path:" << parent_path;
+        info = examinePotentialBundlePath(parent_path);
+
+        if((info.value("Icon") != "") && (info.value("Name") != "") && (info.value("Exec") != "")) {
+            return info;
         }
     }
-
-    if(icon != "")
-        info.insert("Icon", icon);
-    if(applicationName != "")
-    info.insert("Name", applicationName);
-    if(launchableExecutable != "")
-        info.insert("Exec", launchableExecutable);
     return info;
 }
 

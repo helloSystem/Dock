@@ -38,6 +38,7 @@ public:
 
 private:
     SystemAppMonitor *m_sysAppMonitor;
+    QMap<QString, QString>  examinePotentialBundlePath(QString path);
 };
 
 #endif // UTILS_H
