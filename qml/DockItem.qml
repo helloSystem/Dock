@@ -20,6 +20,13 @@ Rectangle {
     signal clicked()
     signal rightClicked()
 
+    onClicked: {
+        if(isActive == false) {
+            console.log("probono: Show open animation");
+            openAnimation.start()
+        }
+    }
+
     color: "transparent"
 
     Image {
@@ -41,6 +48,28 @@ Rectangle {
 
         states: ["mouseIn", "mouseOut"]
         state: "mouseOut"
+
+        ParallelAnimation {
+            // FIXME: Is there a way to make this animation not confined within the box of the Dock? How?
+            id: openAnimation
+            running: false
+            NumberAnimation {
+                target: icon
+                properties: "scale"
+                from: 1
+                to: 5
+                duration: 150
+                easing.type: Easing.InCubic
+            }
+            NumberAnimation {
+                target: icon
+                properties: "opacity"
+                from: 1
+                to: 0
+                duration: 150
+                easing.type: Easing.InCubic
+            }
+        }
 
 /*
         transitions: [
