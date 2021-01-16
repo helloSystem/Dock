@@ -34,6 +34,7 @@ public:
     QString desktopPathFromMetadata(const QString &appId, quint32 pid = 0,
                                     const QString &xWindowWMClassName = QString());
     QMap<QString, QString> readInfoFromDesktop(const QString &desktopFile);
+    QMap<QString, QString> readInfoFromPid(quint32 pid);
 
 private:
     SystemAppMonitor *m_sysAppMonitor;

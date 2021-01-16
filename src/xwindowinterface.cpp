@@ -80,7 +80,7 @@ QMap<QString, QVariant> XWindowInterface::requestInfo(quint64 wid)
     result.insert("active", wid == KWindowSystem::activeWindow());
     result.insert("visibleName", winfo.visibleName());
     result.insert("id", winClass);
-
+    
     return result;
 }
 

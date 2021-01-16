@@ -3,6 +3,25 @@
 
 #include <QProcess>
 
+#include "xwindowinterface.h"
+#include "utils.h"
+
+#include <QTimer>
+#include <QDebug>
+#include <QX11Info>
+#include <QWindow>
+#include <QScreen>
+
+#include <KWindowEffects>
+#include <KWindowSystem>
+#include <KWindowInfo>
+
+// X11
+#include <NETWM>
+#include <xcb/xcb.h>
+#include <xcb/shape.h>
+
+
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractListModel(parent),
       m_iface(XWindowInterface::instance()),
@@ -296,6 +315,33 @@ void ApplicationModel::onWindowAdded(quint64 wid)
             item->visibleName = desktopInfo.value("Name");
             item->exec = desktopInfo.value("Exec");
             item->desktopPath = desktopPath;
+        } else {
+            qDebug() << "probono: No information from desktop file, hence checking for .app bundle or .AppDir";
+
+            KWindowInfo info(wid, NET::WMPid);
+            if (info.valid()){
+                qDebug() << "probono: PID:" << info.pid();
+                QMap<QString, QString> processInfo = Utils::instance()->readInfoFromPid(info.pid());
+
+                if(processInfo.value("Icon") != ""){
+                    qDebug() << "probono: Icon:" << processInfo.value("Icon");
+                    item->iconName = "file://" + processInfo.value("Icon");
+                } else {
+                    // qDebug() << "probono: Icon empty, not using it";
+                }
+                if(processInfo.value("Name") != ""){
+                    qDebug() << "probono: Name:" << processInfo.value("Name");
+                    item->visibleName = processInfo.value("Name");
+                } else {
+                    // qDebug() << "probono: Name empty, not using it";
+                }
+                if(processInfo.value("Exec") != ""){
+                    qDebug() << "probono: Exec:" << processInfo.value("Exec");
+                    item->exec = processInfo.value("Exec");
+                } else {
+                    // qDebug() << "probono: Exec empty, not using it";
+                }
+            }
         }
 
         m_appItems << item;
