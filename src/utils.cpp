@@ -138,7 +138,7 @@ QMap<QString, QString> Utils::readInfoFromPid(quint32 pid)
 
 #endif
 
-    qDebug() << "probonopd: args" << args;
+    qDebug() << "probono: args" << args;
     foreach (const QString &part, args) { // FIXME: Consider only the first two parts as possible paths
 
         // Determine whether we have an AppDir or .app bundle at hand and if yes, get launchableExecutable, applicationName, and icon
