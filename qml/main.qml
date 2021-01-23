@@ -15,7 +15,7 @@ Rectangle {
     property color inactiveDotColor: Settings.darkMode ? Qt.rgba(255, 255, 255, 0.6) : Qt.rgba(0, 0, 0, 0.9)
 
     y: 350
-    NumberAnimation on y { 
+    NumberAnimation on y {
         to: 0
         duration: 5000
         easing {type: Easing.OutQuad}
@@ -29,27 +29,12 @@ Rectangle {
         color: "white"
     }
 
-    DockItem {
-        id: launcherItem
-        anchors.left: parent.left
-        anchors.top: parent.top
-
-        iconSizeRatio: 0.75
-        enableActivateDot: false
-        // iconName: "qrc:/svg/launcher.svg"
-        iconName: "gnome-do"
-        popupText: qsTr("Applications")
-
-        onClicked: {
-            process.start("launch", ["Filer.AppDir", "/Applications"])
-        }
-    }
 
     Item {
         id: appList
-        anchors.left: launcherItem.right
+        anchors.left: parent.left
         anchors.top: parent.top
-        width: parent.width - launcherItem.width * 2
+        width: parent.width - trashItem.width
         height: parent.height
 
         ListView {

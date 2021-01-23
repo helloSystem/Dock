@@ -79,8 +79,8 @@ void MainWindow::resizeWindow()
 
     QSize screenSize = screen()->size();
 
-    // Launcher and Trash
-    int fixedItemCount = 2;
+    // Trash
+    int fixedItemCount = 1;
 
     // horizontal
     int maxWidth = screenSize.width();
