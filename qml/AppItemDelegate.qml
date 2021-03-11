@@ -21,27 +21,32 @@ Item {
     Menu {
         id: contextMenu
 
+        /*
         MenuItem {
             text: qsTr("Open")
             visible: model.windowCount === 0
             onTriggered: appModel.openNewInstance(model.appId)
         }
 
+
         MenuItem {
             text: model.visibleName
             visible: model.windowCount > 0
             onTriggered: appModel.openNewInstance(model.appId)
         }
+        */
 
         MenuItem {
-            text: model.isPined ? qsTr("Unpin") : qsTr("Pin")
+            // visible: model.visibleName !== {};
+            // FIXME: Only show this menu item if model.exec is present and not empty; why can't we seem to get model.exec here?
+            text: model.isPined ? qsTr("Remove ") + model.visibleName + qsTr(" from Dock") : qsTr("Keep ") + model.visibleName + qsTr(" in Dock")
             onTriggered: {
                 model.isPined ? appModel.unPin(model.appId) : appModel.pin(model.appId)
             }
         }
 
         MenuItem {
-            text: qsTr("Close All")
+            text: qsTr("Close ") + model.visibleName
             visible: model.windowCount !== 0
             onTriggered: appModel.closeAllByAppId(model.appId)
         }

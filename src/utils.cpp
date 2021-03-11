@@ -192,6 +192,9 @@ QString Utils::cmdFromPid(quint32 pid)
 
 QString Utils::desktopPathFromMetadata(const QString &appId, quint32 pid, const QString &xWindowWMClassName)
 {
+    qDebug() << "probono: desktopPathFromMetadata";
+    qDebug() << "probono: appId:" << appId;
+    qDebug() << "probono: xWindowWMClassName" << xWindowWMClassName;
     QString result;
 
     if (!appId.isEmpty() && !xWindowWMClassName.isEmpty()) {
