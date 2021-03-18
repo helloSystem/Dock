@@ -60,7 +60,7 @@ Rectangle {
         iconName: "user-trash-empty"
 
         onClicked: {
-            process.start("gio", ["open", "trash:///"])
+            process.start("launch", ["Filer", "trash:///"])
         }
     }
 }
