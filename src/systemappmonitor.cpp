@@ -24,14 +24,6 @@
 #include <QDirIterator>
 #include <QSettings>
 #include <QLocale>
-#include <QDebug>
-
-// FIXME: Replace with Qt QStandardPaths::ApplicationsLocation, https://doc.qt.io/qt-5/qstandardpaths.html
-#if __FreeBSD__
-#define SystemApplicationsFolder "/usr/local/share/applications"
-#else
-#define SystemApplicationsFolder "/usr/share/applications"
-#endif
 
 static SystemAppMonitor *SELF = nullptr;
 
@@ -57,7 +49,10 @@ SystemAppMonitor::SystemAppMonitor(QObject *parent)
     : QObject(parent)
 {
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
-    watcher->addPath(SystemApplicationsFolder);
+    QStringList paths = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+    for (int i = 0; i < paths.size(); i++) {
+        watcher->addPath(paths[i]);
+    }
     connect(watcher, &QFileSystemWatcher::directoryChanged, this, &SystemAppMonitor::refresh);
     refresh();
 }
@@ -84,15 +79,18 @@ void SystemAppMonitor::refresh()
         addedEntries.append(item->path);
 
     QStringList allEntries;
-    QDirIterator it(SystemApplicationsFolder, { "*.desktop" }, QDir::NoFilter, QDirIterator::Subdirectories);
+    QStringList paths = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+    for (int i = 0; i < paths.size(); i++) {
+        QDirIterator it(paths[i], { "*.desktop" }, QDir::NoFilter, QDirIterator::Subdirectories);
 
-    while (it.hasNext()) {
-        const QString &filePath = it.next();
+        while (it.hasNext()) {
+            const QString &filePath = it.next();
 
-        if (!QFile::exists(filePath))
-            continue;
+            if (!QFile::exists(filePath))
+                continue;
 
-        allEntries.append(filePath);
+            allEntries.append(filePath);
+        }
     }
 
     for (const QString &filePath : allEntries) {
