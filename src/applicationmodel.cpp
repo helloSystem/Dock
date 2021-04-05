@@ -311,19 +311,8 @@ void ApplicationModel::onWindowAdded(quint64 wid)
         item->isActive = info.value("active").toBool();
         item->wids.append(wid);
 
-        QString desktopPath = m_iface->desktopFilePath(wid);
-        qDebug() << "probono: desktopPath:" << desktopPath;
-
-        if (!desktopPath.isEmpty()) {
-            qDebug() << "probono: Got information from desktop file, hence not checking for .app bundle or .AppDir";
-            QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopPath);
-            item->iconName = desktopInfo.value("Icon");
-            item->visibleName = desktopInfo.value("Name");
-            item->exec = desktopInfo.value("Exec");
-            item->desktopPath = desktopPath;
-
-        } else {
-            qDebug() << "probono: No information from desktop file, hence checking for .app bundle or .AppDir";
+        if(item->exec == nullptr) {
+            qDebug() << "probono: Checking for .app bundle or .AppDir";
             KWindowInfo info(wid, NET::WMPid);
             if (info.valid()){
                 qDebug() << "probono: PID:" << info.pid();
@@ -347,6 +336,20 @@ void ApplicationModel::onWindowAdded(quint64 wid)
                 } else {
                     // qDebug() << "probono: Exec empty, not using it";
                 }
+            }
+        }
+
+        if(item->exec == nullptr) {
+            QString desktopPath = m_iface->desktopFilePath(wid);
+            qDebug() << "probono: desktopPath:" << desktopPath;
+
+            if (!desktopPath.isEmpty()) {
+                qDebug() << "probono: Use information from desktop file";
+                QMap<QString, QString> desktopInfo = Utils::instance()->readInfoFromDesktop(desktopPath);
+                item->iconName = desktopInfo.value("Icon");
+                item->visibleName = desktopInfo.value("Name");
+                item->exec = desktopInfo.value("Exec");
+                item->desktopPath = desktopPath;
             }
         }
 
