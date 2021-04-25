@@ -190,6 +190,19 @@ void ApplicationModel::unPin(const QString &appId)
     savePinAndUnPinList();
 }
 
+void ApplicationModel::updateGeometries(const QString &id, QRect rect)
+{
+    ApplicationItem *item = findItemById(id);
+
+    // If not found
+    if (!item)
+        return;
+
+    for (quint64 id : item->wids) {
+        m_iface->setIconGeometry(id, rect);
+    }
+}
+
 ApplicationItem *ApplicationModel::findItemByWId(quint64 wid)
 {
     for (ApplicationItem *item : m_appItems) {
@@ -389,11 +402,17 @@ void ApplicationModel::onWindowRemoved(quint64 wid)
 
 void ApplicationModel::onActiveChanged(quint64 wid)
 {
-    beginResetModel();
+    // Using this method will cause the listview scrollbar to reset.
+    // beginResetModel();
 
     for (ApplicationItem *item : m_appItems) {
-        item->isActive = item->wids.contains(wid);
-    }
+        if (item->isActive != item->wids.contains(wid)) {
+            item->isActive = item->wids.contains(wid);
 
-    endResetModel();
+            QModelIndex idx = index(indexOf(item->id), 0, QModelIndex());
+            if (idx.isValid()) {
+                emit dataChanged(idx, idx);
+            }
+        }
+    }
 }

@@ -18,6 +18,25 @@ Item {
 
     signal onClicked
 
+    onXChanged: updateGeometryTimer.start()
+    onYChanged: updateGeometryTimer.start()
+
+    function updateGeometry() {
+        appModel.updateGeometries(model.appId, Qt.rect(dockItem.mapToGlobal(0, 0).x,
+                                                            dockItem.mapToGlobal(0, 0).y,
+                                                            dockItem.width, dockItem.height))
+    }
+
+    Timer {
+        id: updateGeometryTimer
+        interval: 800
+        repeat: false
+
+        onTriggered: {
+            updateGeometry()
+        }
+    }
+
     Menu {
         id: contextMenu
 
@@ -53,12 +72,15 @@ Item {
     }
 
     DockItem {
+        id: dockItem
         anchors.fill: parent
         iconName: model.iconName
         isActive: model.isActive
         popupText: model.visibleName
         enableActivateDot: model.windowCount !== 0
 
+        onPositionChanged: updateGeometry()
+        onPressed: updateGeometry()
         onClicked: appModel.clicked(model.appId)
         onRightClicked: contextMenu.open()
     }

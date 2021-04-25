@@ -33,6 +33,8 @@ public:
 
     QString desktopFilePath(quint64 wid);
 
+    void setIconGeometry(quint64 wid, const QRect &rect);
+
 signals:
     void windowAdded(quint64 wid);
     void windowRemoved(quint64 wid);

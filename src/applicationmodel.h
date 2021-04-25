@@ -34,6 +34,8 @@ public:
     Q_INVOKABLE void pin(const QString &appId);
     Q_INVOKABLE void unPin(const QString &appId);
 
+    Q_INVOKABLE void updateGeometries(const QString &id, QRect rect);
+
     int iconSize() { return m_iconSize; }
 
 signals:

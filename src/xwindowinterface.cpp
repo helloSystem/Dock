@@ -168,6 +168,21 @@ QString XWindowInterface::desktopFilePath(quint64 wid)
                                                       info.windowClassName());
 }
 
+void XWindowInterface::setIconGeometry(quint64 wid, const QRect &rect)
+{
+    NETWinInfo info(QX11Info::connection(),
+                    wid,
+                    (WId) QX11Info::appRootWindow(),
+                    NET::WMIconGeometry,
+                    QFlags<NET::Property2>(1));
+    NETRect nrect;
+    nrect.pos.x = rect.x();
+    nrect.pos.y = rect.y();
+    nrect.size.height = rect.height();
+    nrect.size.width = rect.width();
+    info.setIconGeometry(nrect);
+}
+
 void XWindowInterface::onWindowadded(quint64 wid)
 {
     if (isAcceptableWindow(wid)) {

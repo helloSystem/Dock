@@ -45,7 +45,7 @@ Rectangle {
             model: appModel
             clip: true
 
-            delegate: AppItemDelegate { }
+            delegate: AppItem { }
         }
     }
 

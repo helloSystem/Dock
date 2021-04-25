@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 
-Rectangle {
+MouseArea {
     id: dockItem
     width: root.height
     height: root.height
@@ -17,6 +17,7 @@ Rectangle {
     property double iconSizeRatio: 0.8
     property var iconName
 
+    signal pressed()
     signal clicked()
     signal rightClicked()
 
@@ -26,8 +27,6 @@ Rectangle {
             openAnimation.start()
         }
     }
-
-    color: "transparent"
 
     Image {
         id: icon
@@ -127,6 +126,8 @@ Rectangle {
         anchors.fill: icon
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        onPressed: dockItem.pressed()
 
         onClicked: {
             if (mouse.button === Qt.LeftButton)
