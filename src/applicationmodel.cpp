@@ -122,16 +122,17 @@ bool ApplicationModel::openNewInstance(const QString &appId)
 
     QProcess process;
     if (!item->exec.isEmpty()) {
-        QStringList args = item->exec.split(" ");
-        // process.setProgram(args.first());
-        // args.removeFirst();
-        // probono: Nah, we use the 'launch' command instead
         process.setProgram("launch");
-
-        if (!args.isEmpty()) {
-            process.setArguments(args);
-        }
-
+        
+        if(item->exec.contains("Filer"))
+           {
+               //we want to launch something trough filer, correct the args.
+               process.setArguments(item->exec.split(" "));
+           }else{
+                QStringList args;
+    	        args << item->exec;
+        	    process.setArguments(args);
+           }
     } else {
         process.setProgram(appId);
     }
