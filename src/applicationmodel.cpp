@@ -1,4 +1,4 @@
-﻿#include "applicationmodel.h"
+#include "applicationmodel.h"
 #include "utils.h"
 
 #include <QProcess>
@@ -122,7 +122,7 @@ bool ApplicationModel::openNewInstance(const QString &appId)
 
     QProcess process;
     if (!item->exec.isEmpty()) {
-        QStringList args = item->exec.split(" ");
+        QStringList args = { item->exec }; 
         // process.setProgram(args.first());
         // args.removeFirst();
         // probono: Nah, we use the 'launch' command instead
@@ -324,35 +324,34 @@ void ApplicationModel::onWindowAdded(quint64 wid)
         item->isActive = info.value("active").toBool();
         item->wids.append(wid);
 
-        if(item->exec == nullptr) {
-            qDebug() << "probono: Checking for .app bundle or .AppDir";
-            KWindowInfo info(wid, NET::WMPid);
-            if (info.valid()){
-                qDebug() << "probono: PID:" << info.pid();
-                QMap<QString, QString> processInfo = Utils::instance()->readInfoFromPid(info.pid());
+        qDebug() << "probono: Checking for .app bundle or .AppDir";
+        KWindowInfo info(wid, NET::WMPid);
+        if (info.valid()){
+            qDebug() << "probono: PID:" << info.pid();
+            QMap<QString, QString> processInfo = Utils::instance()->readInfoFromPid(info.pid());
 
-                if(processInfo.value("Icon") != ""){
-                    qDebug() << "probono: Icon:" << processInfo.value("Icon");
-                    item->iconName = "file://" + processInfo.value("Icon");
-                } else {
-                    // qDebug() << "probono: Icon empty, not using it";
-                }
-                if(processInfo.value("Name") != ""){
-                    qDebug() << "probono: Name:" << processInfo.value("Name");
-                    item->visibleName = processInfo.value("Name");
-                } else {
-                    // qDebug() << "probono: Name empty, not using it";
-                }
-                if(processInfo.value("Exec") != ""){
-                    qDebug() << "probono: Exec:" << processInfo.value("Exec");
-                    item->exec = processInfo.value("Exec");
-                } else {
-                    // qDebug() << "probono: Exec empty, not using it";
-                }
+            if(processInfo.value("Icon") != ""){
+                qDebug() << "probono: Icon:" << processInfo.value("Icon");
+                item->iconName = "file://" + processInfo.value("Icon");
+            } else {
+                // qDebug() << "probono: Icon empty, not using it";
+            }
+            if(processInfo.value("Name") != ""){
+                qDebug() << "probono: Name:" << processInfo.value("Name");
+                item->visibleName = processInfo.value("Name");
+            } else {
+                // qDebug() << "probono: Name empty, not using it";
+            }
+            if(processInfo.value("Exec") != ""){
+                qDebug() << "probono: Exec:" << processInfo.value("Exec");
+                item->exec = processInfo.value("Exec");
+            } else {
+                // qDebug() << "probono: Exec empty, not using it";
             }
         }
+    
 
-        if(item->exec == nullptr) {
+        if(item->exec.isEmpty()) {
             QString desktopPath = m_iface->desktopFilePath(wid);
             qDebug() << "probono: desktopPath:" << desktopPath;
 
