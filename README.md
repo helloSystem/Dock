@@ -29,7 +29,7 @@ sudo make install
 
 ## Acknowledgments
 
-Dock is based on https://github.com/cyberos/cyber-dock by rekols.
+Dock is based on https://github.com/cutefishos/dock by rekols.
 
 ## License
 
