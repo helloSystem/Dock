@@ -129,7 +129,7 @@ bool XWindowInterface::isAcceptableWindow(quint64 wid)
 void XWindowInterface::setViewStruts(QWindow *view, const QRect &rect)
 {
     NETExtendedStrut strut;
-    int margin = 10;
+    int margin = 1; // probono: was 10
 
     const auto screen = view->screen();
 
