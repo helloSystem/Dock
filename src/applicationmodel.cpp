@@ -383,7 +383,7 @@ void ApplicationModel::onWindowAdded(quint64 wid)
             }
             if(processInfo.value("Exec") != ""){
                 qDebug() << "probono: Exec:" << processInfo.value("Exec");
-                item->exec = processInfo.value("Exec");
+                item->exec = "'" + processInfo.value("Exec") + "'";
             } else {
                 // qDebug() << "probono: Exec empty, not using it";
             }
