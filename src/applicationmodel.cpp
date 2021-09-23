@@ -113,6 +113,42 @@ void ApplicationModel::clicked(const QString &id)
     }
 }
 
+/*
+Split a QString into a QString list obeying quotes.
+FIXME: Not all edge cases might be covered, such as filenames that contain ' characters.
+Based on https://stackoverflow.com/a/25097755
+Input QString --> Foobar Test 'Test Foo' "Test Bar" Test\ Baz
+Output QStringList --> "Foobar", "Test", "Test Foo", "Test Bar", "Test Baz"
+*/
+QStringList ApplicationModel::splitCommandLine(const QString & cmdLine)
+{
+    QStringList list;
+    QString arg;
+    bool escape = false;
+    enum { Idle, Arg, QuotedArg } state = Idle;
+    foreach (QChar const c, cmdLine) {
+        if (!escape && c == '\\') { escape = true; continue; }
+        switch (state) {
+        case Idle:
+            if (!escape && (c == '"' || c == "'")) state = QuotedArg;
+            else if (escape || !c.isSpace()) { arg += c; state = Arg; }
+            break;
+        case Arg:
+            if (!escape && (c == '"' || c == "'")) state = QuotedArg;
+            else if (escape || !c.isSpace()) arg += c;
+            else { list << arg; arg.clear(); state = Idle; }
+            break;
+        case QuotedArg:
+            if (!escape && (c == '"' || c == "'")) state = arg.isEmpty() ? Idle : Arg;
+            else arg += c;
+            break;
+        }
+        escape = false;
+    }
+    if (!arg.isEmpty()) list << arg;
+    return list;
+}
+
 bool ApplicationModel::openNewInstance(const QString &appId)
 {
     ApplicationItem *item = findItemById(appId);
@@ -122,13 +158,16 @@ bool ApplicationModel::openNewInstance(const QString &appId)
 
     QProcess process;
     if (!item->exec.isEmpty()) {
-        QStringList args = { item->exec }; 
+        QString argsString = item->exec ; // FIXME: Why don't we get double quotes (") here? At least we do get backslashes (if entered as \\) and single quotes (')
         // process.setProgram(args.first());
         // args.removeFirst();
         // probono: Nah, we use the 'launch' command instead
         process.setProgram("launch");
 
-        if (!args.isEmpty()) {
+        if (!argsString.isEmpty()) {
+            // qDebug() << "probono: Dock: argsString:" << argsString;
+            QStringList args = splitCommandLine(argsString);
+            // qDebug() << "probono: Dock: args:" << args;
             process.setArguments(args);
         }
 

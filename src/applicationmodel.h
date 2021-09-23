@@ -51,6 +51,7 @@ private:
     void onWindowAdded(quint64 wid);
     void onWindowRemoved(quint64 wid);
     void onActiveChanged(quint64 wid);
+    static QStringList splitCommandLine(const QString & cmdLine);
 
 private:
     XWindowInterface *m_iface;
