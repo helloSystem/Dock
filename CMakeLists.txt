@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(PROJECT_NAME cyber-dock)
+set(PROJECT_NAME Dock)
 project(${PROJECT_NAME})
+
+set(CMAKE_INSTALL_PREFIX "/System/Dock.app")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -46,4 +48,4 @@ target_link_libraries(${PROJECT_NAME}
         KF5::WindowSystem
 )
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
